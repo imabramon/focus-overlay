@@ -1,0 +1,78 @@
+<Window x:Class="FocusOverlay.Views.EditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Focus Overlay — редактор"
+        Width="1080"
+        Height="740"
+        MinWidth="820"
+        MinHeight="520"
+        Icon="/Assets/eye.ico"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="10,3" />
+            <Setter Property="Margin" Value="4,0,0,0" />
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel Margin="10">
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Content="Новый" Click="OnNewPresetClick" />
+                <Button Content="Удалить" Click="OnDeletePresetClick" />
+                <Button Content="Импорт…" Click="OnImportClick" />
+                <Button Content="Импорт папки…" Click="OnImportFolderClick" />
+                <Button Content="Экспорт…" Click="OnExportClick" />
+                <Button Content="Настройки…" Margin="16,0,0,0" Click="OnSettingsClick" />
+            </StackPanel>
+            <TextBlock Text="Пресет:" Style="{StaticResource FieldLabel}" />
+            <ComboBox x:Name="PresetCombo" Width="220" DisplayMemberPath="Name" SelectionChanged="OnPresetSelectionChanged" />
+            <TextBlock Text="Название:" Style="{StaticResource FieldLabel}" Margin="16,0,8,0" />
+            <TextBox VerticalContentAlignment="Center"
+                     Text="{Binding SelectedItem.Name, ElementName=PresetCombo, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
+
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="230" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <DockPanel Grid.Column="0">
+                <UniformGrid DockPanel.Dock="Bottom" Columns="4" Margin="0,6,0,0">
+                    <Button Content="+" ToolTip="Добавить вкладку" Margin="0" Click="OnAddPageClick" />
+                    <Button Content="−" ToolTip="Удалить вкладку" Margin="4,0,0,0" Click="OnRemovePageClick" />
+                    <Button Content="↑" ToolTip="Выше" Margin="4,0,0,0" Click="OnMovePageUpClick" />
+                    <Button Content="↓" ToolTip="Ниже" Margin="4,0,0,0" Click="OnMovePageDownClick" />
+                </UniformGrid>
+                <ListBox x:Name="PageList" DisplayMemberPath="Title" SelectionChanged="OnPageSelectionChanged" />
+            </DockPanel>
+
+            <DockPanel x:Name="PageEditor" Grid.Column="2"
+                       DataContext="{Binding SelectedItem, ElementName=PageList}">
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                    <Button DockPanel.Dock="Right" Content="Изображение…" Click="OnInsertImageClick" />
+                    <TextBlock Text="Заголовок:" Style="{StaticResource FieldLabel}" />
+                    <TextBox VerticalContentAlignment="Center"
+                             Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+                <TextBlock DockPanel.Dock="Bottom" Margin="0,4,0,0" Foreground="Gray" TextWrapping="Wrap"
+                           Text="Markdown: # заголовки, **жирный**, *курсив*, ~~зачёркнутый~~, ==выделение==, списки, - [ ] задачи, таблицы ({widths=&quot;120,1*,2*&quot; borders=none|rows|outer} строкой над таблицей), &gt; цитаты. Картинки: ![](файл.png){width=32} — Ctrl+V вставляет картинку из буфера." />
+                <TextBox x:Name="ContentBox"
+                         Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
+                         AcceptsReturn="True"
+                         AcceptsTab="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         FontFamily="Consolas"
+                         FontSize="13" />
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>
