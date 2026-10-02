@@ -28,8 +28,19 @@ public partial class SettingsWindow : Window
             [CornerBottomRight] = OverlayCorner.BottomRight,
         };
 
+        StripCornerCombo.ItemsSource = new[]
+        {
+            new CornerOption(OverlayCorner.TopLeft, "Левый верхний"),
+            new CornerOption(OverlayCorner.TopRight, "Правый верхний"),
+            new CornerOption(OverlayCorner.BottomLeft, "Левый нижний"),
+            new CornerOption(OverlayCorner.BottomRight, "Правый нижний"),
+        };
+
         AddHandler(TextBoxBase.TextChangedEvent, new TextChangedEventHandler(OnAnyChange));
         AddHandler(RangeBase.ValueChangedEvent, new RoutedPropertyChangedEventHandler<double>(OnAnyChange));
+        AddHandler(ToggleButton.CheckedEvent, new RoutedEventHandler(OnAnyChange));
+        AddHandler(ToggleButton.UncheckedEvent, new RoutedEventHandler(OnAnyChange));
+        StripCornerCombo.SelectionChanged += OnAnyChange;
 
         _controller.SettingsReplaced += Rebind;
         Closed += (_, _) => _controller.SettingsReplaced -= Rebind;
@@ -44,6 +55,8 @@ public partial class SettingsWindow : Window
         {
             LayoutGroup.DataContext = null;
             LayoutGroup.DataContext = _controller.Settings;
+            StripGroup.DataContext = null;
+            StripGroup.DataContext = _controller.Settings.TabStrip;
 
             foreach (var (button, corner) in _cornerButtons)
             {
@@ -191,4 +204,6 @@ public partial class SettingsWindow : Window
             : string.Empty;
         _controller.ScheduleRefresh();
     }
+
+    public sealed record CornerOption(OverlayCorner Value, string Label);
 }

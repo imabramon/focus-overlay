@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Markdig;
-using Markdig.Renderers.Html;
 using Md = Markdig.Syntax;
 using MdInlines = Markdig.Syntax.Inlines;
 using MdTables = Markdig.Extensions.Tables;
@@ -34,13 +35,18 @@ public static class MarkdownRenderer
         .UseTaskLists()
         .UseEmphasisExtras()
         .UseAutoLinks()
-        .UseGenericAttributes()
         .UseSoftlineBreakAsHardlineBreak()
         .Build();
 
     private static readonly FontFamily _textFont = new("Segoe UI");
     private static readonly FontFamily _codeFont = new("Consolas");
     private static readonly ConcurrentDictionary<string, (DateTime Stamp, BitmapSource Image)> _imageCache = new();
+    [ThreadStatic]
+    private static string? _source;
+
+    private static readonly Regex _optionsLinePattern = new(@"^\s*\{(?<body>[^{}]*)\}\s*$", RegexOptions.Compiled);
+    private static readonly Regex _optionPattern = new(@"(?<key>[A-Za-z][\w-]*)\s*=\s*(?:""(?<value>[^""]*)""|'(?<value>[^']*)'|(?<value>[^\s""']+))", RegexOptions.Compiled);
+    private static readonly Regex _imageSizePattern = new(@"^(?<alt>.*?)\s*\|\s*(?<width>\d+(?:[.,]\d+)?)?\s*(?:[xх×]\s*(?<height>\d+(?:[.,]\d+)?))?\s*$", RegexOptions.Compiled);
 
     public static FlowDocument Render(string markdown, MarkdownTheme theme)
     {
@@ -54,20 +60,66 @@ public static class MarkdownRenderer
             TextAlignment = TextAlignment.Left,
         };
 
-        AddBlocks(Markdown.Parse(markdown ?? string.Empty, _pipeline), document.Blocks, theme);
+        _source = markdown ?? string.Empty;
+        try
+        {
+            AddBlocks(Markdown.Parse(_source, _pipeline), document.Blocks, theme);
+        }
+        finally
+        {
+            _source = null;
+        }
+
         return document;
     }
 
     private static void AddBlocks(Md.ContainerBlock container, BlockCollection target, MarkdownTheme theme)
     {
-        foreach (var block in container)
+        IReadOnlyDictionary<string, string>? tableOptions = null;
+        for (var i = 0; i < container.Count; i++)
         {
-            var rendered = RenderBlock(block, theme);
+            var block = container[i];
+            if (block is Md.ParagraphBlock paragraph
+                && i + 1 < container.Count
+                && container[i + 1] is MdTables.Table
+                && TryParseOptionsLine(paragraph, out var options))
+            {
+                tableOptions = options;
+                continue;
+            }
+
+            var rendered = block is MdTables.Table table ? RenderTable(table, tableOptions, theme) : RenderBlock(block, theme);
+            tableOptions = null;
             if (rendered != null)
             {
                 target.Add(rendered);
             }
         }
+    }
+
+    private static bool TryParseOptionsLine(Md.ParagraphBlock paragraph, out IReadOnlyDictionary<string, string> options)
+    {
+        options = new Dictionary<string, string>();
+        var span = paragraph.Span;
+        if (_source == null || span.Start < 0 || span.End >= _source.Length || span.Length <= 0)
+        {
+            return false;
+        }
+
+        var match = _optionsLinePattern.Match(_source.Substring(span.Start, span.Length));
+        if (!match.Success)
+        {
+            return false;
+        }
+
+        var parsed = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (Match option in _optionPattern.Matches(match.Groups["body"].Value))
+        {
+            parsed[option.Groups["key"].Value] = option.Groups["value"].Value;
+        }
+
+        options = parsed;
+        return parsed.Count > 0;
     }
 
     private static Block? RenderBlock(Md.Block block, MarkdownTheme theme) => block switch
@@ -76,9 +128,10 @@ public static class MarkdownRenderer
         Md.ParagraphBlock paragraph => RenderParagraph(paragraph.Inline, theme),
         Md.ListBlock list => RenderList(list, theme),
         Md.QuoteBlock quote => RenderQuote(quote, theme),
+        Md.FencedCodeBlock fenced when PageDisplaySettings.IsSettingsBlock(fenced) => null,
         Md.CodeBlock code => RenderCode(code, theme),
         Md.ThematicBreakBlock => RenderRule(theme),
-        MdTables.Table table => RenderTable(table, theme),
+        MdTables.Table table => RenderTable(table, null, theme),
         Md.LinkReferenceDefinitionGroup => null,
         Md.HtmlBlock => null,
         Md.ContainerBlock container => RenderSection(container, theme),
@@ -209,11 +262,10 @@ public static class MarkdownRenderer
         return section;
     }
 
-    private static Table RenderTable(MdTables.Table source, MarkdownTheme theme)
+    private static Table RenderTable(MdTables.Table source, IReadOnlyDictionary<string, string>? options, MarkdownTheme theme)
     {
-        var attributes = source.TryGetAttributes();
-        var borders = ParseBorders(ReadAttribute(attributes, "borders") ?? ReadAttribute(attributes, "border"));
-        var widths = (ReadAttribute(attributes, "widths") ?? string.Empty)
+        var borders = ParseBorders(ReadOption(options, "borders") ?? ReadOption(options, "border"));
+        var widths = (ReadOption(options, "widths") ?? string.Empty)
             .Split(',', StringSplitOptions.TrimEntries);
 
         var table = new Table
@@ -307,7 +359,7 @@ public static class MarkdownRenderer
         return TryParseNumber(text.Replace("px", string.Empty), out var pixels) ? new GridLength(pixels, GridUnitType.Pixel) : null;
     }
 
-    private static System.Collections.Generic.List<GridLength> ResolveColumnWidths(System.Collections.Generic.List<GridLength> widths, double availableWidth)
+    private static List<GridLength> ResolveColumnWidths(List<GridLength> widths, double availableWidth)
     {
         if (widths.All(width => width.IsAbsolute))
         {
@@ -429,7 +481,8 @@ public static class MarkdownRenderer
 
     private static Inline RenderImage(MdInlines.LinkInline link, MarkdownTheme theme)
     {
-        var alt = string.Concat(Md.MarkdownObjectExtensions.Descendants<MdInlines.LiteralInline>(link).Select(literal => literal.Content.ToString()));
+        var label = string.Concat(Md.MarkdownObjectExtensions.Descendants<MdInlines.LiteralInline>(link).Select(literal => literal.Content.ToString()));
+        var (alt, width, height) = ParseImageLabel(label);
         var uri = theme.ResolveImage(link.Url ?? string.Empty);
         var source = uri != null ? LoadImage(uri) : null;
 
@@ -446,10 +499,6 @@ public static class MarkdownRenderer
             MaxWidth = theme.ContentWidth,
             ToolTip = string.IsNullOrEmpty(alt) ? null : alt,
         };
-
-        var attributes = link.TryGetAttributes();
-        var width = ReadSize(attributes, "width");
-        var height = ReadSize(attributes, "height");
 
         if (width.HasValue)
         {
@@ -469,17 +518,22 @@ public static class MarkdownRenderer
         return new InlineUIContainer(image) { BaselineAlignment = BaselineAlignment.Center };
     }
 
-    private static double? ReadSize(HtmlAttributes? attributes, string name)
+    private static (string Alt, double? Width, double? Height) ParseImageLabel(string label)
     {
-        var value = ReadAttribute(attributes, name);
-        return value != null && TryParseNumber(value.Replace("px", string.Empty), out var result) ? result : null;
+        var match = _imageSizePattern.Match(label);
+        if (!match.Success || (!match.Groups["width"].Success && !match.Groups["height"].Success))
+        {
+            return (label, null, null);
+        }
+
+        double? ReadGroup(string name) =>
+            match.Groups[name].Success && TryParseNumber(match.Groups[name].Value, out var value) ? value : null;
+
+        return (match.Groups["alt"].Value, ReadGroup("width"), ReadGroup("height"));
     }
 
-    private static string? ReadAttribute(HtmlAttributes? attributes, string name)
-    {
-        var value = attributes?.Properties?.FirstOrDefault(pair => pair.Key.Equals(name, StringComparison.OrdinalIgnoreCase)).Value;
-        return string.IsNullOrWhiteSpace(value) ? null : value;
-    }
+    private static string? ReadOption(IReadOnlyDictionary<string, string>? options, string name) =>
+        options != null && options.TryGetValue(name, out var value) && !string.IsNullOrWhiteSpace(value) ? value : null;
 
     private enum TableBorders
     {

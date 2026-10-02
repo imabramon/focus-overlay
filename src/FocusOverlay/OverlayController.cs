@@ -16,6 +16,7 @@ public sealed class OverlayController : IDisposable
 
     private readonly AppState _state;
     private readonly OverlayWindow _overlay = new();
+    private readonly TabStripWindow _tabStrip = new();
     private readonly HotkeyManager _hotkeys = new();
     private readonly TrayIcon _tray;
     private readonly DispatcherTimer _refreshTimer = new() { Interval = TimeSpan.FromMilliseconds(150) };
@@ -51,10 +52,6 @@ public sealed class OverlayController : IDisposable
     {
         var failed = RegisterHotkeys();
         Refresh();
-        if (Settings.OverlayVisible)
-        {
-            _overlay.Show();
-        }
 
         if (failed.Count > 0)
         {
@@ -88,16 +85,7 @@ public sealed class OverlayController : IDisposable
     public void Toggle()
     {
         Settings.OverlayVisible = !Settings.OverlayVisible;
-        if (Settings.OverlayVisible)
-        {
-            Refresh();
-            _overlay.Show();
-        }
-        else
-        {
-            _overlay.Hide();
-        }
-
+        Refresh();
         ScheduleSave();
     }
 
@@ -129,7 +117,38 @@ public sealed class OverlayController : IDisposable
     public void Refresh()
     {
         _state.Normalize();
-        _overlay.Apply(Settings, _state.ActivePreset, Settings.ActivePageIndex);
+        var preset = _state.ActivePreset;
+        var pageIndex = Settings.ActivePageIndex;
+        var page = pageIndex < preset.Pages.Count ? preset.Pages[pageIndex] : null;
+        var effective = PageDisplaySettings.Resolve(Settings, page?.Content);
+        var strip = Settings.TabStrip;
+        var stripHeight = strip.Visible ? _tabStrip.Apply(Settings, preset, pageIndex) : 0;
+        var sharesAnchor = !strip.Detached
+            && effective.Corner == Settings.Corner
+            && effective.OffsetX.Equals(Settings.OffsetX)
+            && effective.OffsetY.Equals(Settings.OffsetY);
+        _overlay.Apply(effective, preset, page, sharesAnchor ? stripHeight : 0);
+        UpdateVisibility();
+    }
+
+    private void UpdateVisibility()
+    {
+        if (!Settings.OverlayVisible)
+        {
+            _overlay.Hide();
+            _tabStrip.Hide();
+            return;
+        }
+
+        _overlay.Show();
+        if (Settings.TabStrip.Visible && _tabStrip.HasTabs)
+        {
+            _tabStrip.Show();
+        }
+        else
+        {
+            _tabStrip.Hide();
+        }
     }
 
     public void OpenEditor()
@@ -300,6 +319,7 @@ public sealed class OverlayController : IDisposable
         _hotkeys.Dispose();
         _tray.Dispose();
         _overlay.Close();
+        _tabStrip.Close();
     }
 
     private void ChangePage(int delta)

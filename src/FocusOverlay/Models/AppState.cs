@@ -14,6 +14,7 @@ public sealed class AppState
     {
         Settings ??= new AppSettings();
         Settings.Hotkeys ??= new HotkeySettings();
+        Settings.TabStrip ??= new TabStripSettings();
         Presets ??= new ObservableCollection<Preset>();
 
         if (Presets.Count == 0)
@@ -37,6 +38,12 @@ public sealed class AppState
         Settings.Height = Math.Max(100, Settings.Height);
         Settings.FontSize = Math.Clamp(Settings.FontSize, 6, 48);
         Settings.BackgroundOpacity = Math.Clamp(Settings.BackgroundOpacity, 0, 1);
+
+        var strip = Settings.TabStrip;
+        strip.Width = Math.Max(100, strip.Width);
+        strip.Scale = Math.Clamp(strip.Scale, 0.25, 4);
+        strip.FontSize = Math.Clamp(strip.FontSize, 6, 48);
+        strip.BackgroundOpacity = Math.Clamp(strip.BackgroundOpacity, 0, 1);
     }
 
     public static AppState CreateDefault()

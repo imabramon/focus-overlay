@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:FocusOverlay.Views"
         Title="Focus Overlay — настройки"
-        Width="760"
+        Width="500"
         SizeToContent="Height"
         ResizeMode="CanMinimize"
         Icon="/Assets/eye.ico"
@@ -13,9 +13,6 @@
             <Setter Property="Padding" Value="12,4" />
             <Setter Property="Margin" Value="6,0,0,0" />
         </Style>
-        <Style TargetType="GroupBox">
-            <Setter Property="Padding" Value="10,8" />
-        </Style>
         <Style x:Key="FieldLabel" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Margin" Value="0,0,10,0" />
@@ -23,6 +20,10 @@
         <Style x:Key="Field" TargetType="FrameworkElement">
             <Setter Property="Margin" Value="0,3" />
             <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,10,0,4" />
         </Style>
         <Style x:Key="CornerButton" TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
             <Setter Property="Width" Value="56" />
@@ -43,15 +44,9 @@
             </StackPanel>
         </DockPanel>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="12" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <GroupBox x:Name="LayoutGroup" Grid.Column="0" Header="Положение и вид">
-                <StackPanel>
+        <TabControl>
+            <TabItem Header="Оверлей">
+                <StackPanel x:Name="LayoutGroup" Margin="10">
                     <TextBlock Text="Угол экрана" Margin="0,0,0,4" />
                     <Border HorizontalAlignment="Left" Width="220" Height="130" Margin="0,0,0,10"
                             BorderBrush="Gray" BorderThickness="2" CornerRadius="4" Background="#FF2B2B2B">
@@ -127,10 +122,92 @@
                                               ColorText="{Binding AccentColor}" ColorChanged="OnColorChanged" />
                     </Grid>
                 </StackPanel>
-            </GroupBox>
+            </TabItem>
 
-            <GroupBox Grid.Column="2" Header="Горячие клавиши">
-                <StackPanel>
+            <TabItem Header="Полоса вкладок">
+                <StackPanel x:Name="StripGroup" Margin="10">
+                    <CheckBox Content="Показывать полосу вкладок" IsChecked="{Binding Visible}" Margin="0,0,0,6" />
+                    <CheckBox Content="Отдельное положение (не прикреплять к оверлею)" IsChecked="{Binding Detached}" />
+                    <TextBlock Margin="20,2,0,0" Foreground="Gray" TextWrapping="Wrap" FontSize="11"
+                               Text="Без галочки полоса стоит в углу оверлея, совпадает с ним по ширине, а содержимое вкладки встаёт рядом с ней." />
+
+                    <TextBlock Text="Положение" Style="{StaticResource SectionTitle}" />
+                    <Grid IsEnabled="{Binding Detached}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Угол экрана" Style="{StaticResource FieldLabel}" />
+                        <ComboBox x:Name="StripCornerCombo" Grid.Row="0" Grid.Column="1" Style="{StaticResource Field}"
+                                  DisplayMemberPath="Label" SelectedValuePath="Value"
+                                  SelectedValue="{Binding Corner}" />
+
+                        <TextBlock Grid.Row="1" Text="Отступ по X" Style="{StaticResource FieldLabel}" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Field}"
+                                 Text="{Binding OffsetX, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="2" Text="Отступ по Y" Style="{StaticResource FieldLabel}" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Field}"
+                                 Text="{Binding OffsetY, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="3" Text="Ширина" Style="{StaticResource FieldLabel}" />
+                        <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Field}"
+                                 Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+
+                    <TextBlock Text="Вид" Style="{StaticResource SectionTitle}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Масштаб (×)" Style="{StaticResource FieldLabel}"
+                                   ToolTip="Множитель к общему масштабу оверлея: горячие клавиши масштаба меняют и полосу" />
+                        <DockPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Field}">
+                            <TextBlock DockPanel.Dock="Right" Width="36" TextAlignment="Right"
+                                       Text="{Binding Scale, StringFormat={}{0:0.00}}" />
+                            <Slider Minimum="0.5" Maximum="2" SmallChange="0.05" LargeChange="0.1"
+                                    IsSnapToTickEnabled="True" TickFrequency="0.05"
+                                    Value="{Binding Scale}" />
+                        </DockPanel>
+
+                        <TextBlock Grid.Row="1" Text="Размер шрифта" Style="{StaticResource FieldLabel}" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Field}"
+                                 Text="{Binding FontSize, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="2" Text="Прозрачность фона" Style="{StaticResource FieldLabel}" />
+                        <Slider Grid.Row="2" Grid.Column="1" Style="{StaticResource Field}"
+                                Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1"
+                                Value="{Binding BackgroundOpacity}" />
+
+                        <TextBlock Grid.Row="3" Text="Цвет текста" Style="{StaticResource FieldLabel}" />
+                        <local:ColorPickerBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Field}"
+                                              ColorText="{Binding TextColor}" ColorChanged="OnColorChanged" />
+
+                        <TextBlock Grid.Row="4" Text="Цвет активной вкладки" Style="{StaticResource FieldLabel}" />
+                        <local:ColorPickerBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Field}"
+                                              ColorText="{Binding AccentColor}" ColorChanged="OnColorChanged" />
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Горячие клавиши">
+                <StackPanel Margin="10">
                     <Grid x:Name="HotkeysGrid">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -141,7 +218,7 @@
                                Text="Кликните в поле и нажмите сочетание. Backspace — очистить, Esc — отмена." />
                     <TextBlock x:Name="HotkeyStatus" Margin="0,6,0,0" Foreground="Firebrick" TextWrapping="Wrap" />
                 </StackPanel>
-            </GroupBox>
-        </Grid>
+            </TabItem>
+        </TabControl>
     </DockPanel>
 </Window>

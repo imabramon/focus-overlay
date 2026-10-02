@@ -63,7 +63,7 @@
                              Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
                 <TextBlock DockPanel.Dock="Bottom" Margin="0,4,0,0" Foreground="Gray" TextWrapping="Wrap"
-                           Text="Markdown: # заголовки, **жирный**, *курсив*, ~~зачёркнутый~~, ==выделение==, списки, - [ ] задачи, таблицы ({widths=&quot;120,1*,2*&quot; borders=none|rows|outer} строкой над таблицей), &gt; цитаты. Картинки: ![](файл.png){width=32} — Ctrl+V вставляет картинку из буфера." />
+                           Text="Markdown: **жирный**, *курсив*, ==выделение==, - [ ] задачи, таблицы. Картинка с размером: ![имя|32](файл.png), Ctrl+V вставляет из буфера. Параметры таблицы: {widths=&quot;120,1*&quot; borders=rows} через пустую строку над ней. Вид вкладки: блок ```focus-overlay. Полное описание: docs/markup.md в репозитории." />
                 <TextBox x:Name="ContentBox"
                          Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
                          AcceptsReturn="True"

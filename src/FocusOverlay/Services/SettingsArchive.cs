@@ -29,6 +29,7 @@ public static class SettingsArchive
             Version = FormatVersion,
             Overlay = OverlayLayout.From(settings),
             Hotkeys = CloneHotkeys(settings.Hotkeys),
+            TabStrip = settings.TabStrip.Clone(),
         };
         File.WriteAllText(path, JsonSerializer.Serialize(file, _options), new UTF8Encoding(false));
     }
@@ -50,12 +51,14 @@ public static class SettingsArchive
 
         (file.Overlay ?? new OverlayLayout()).ApplyTo(target);
         target.Hotkeys = CloneHotkeys(file.Hotkeys ?? new HotkeySettings());
+        target.TabStrip = file.TabStrip?.Clone() ?? new TabStripSettings();
     }
 
     public static void ResetToDefaults(AppSettings target)
     {
         OverlayLayout.From(new AppSettings()).ApplyTo(target);
         target.Hotkeys = new HotkeySettings();
+        target.TabStrip = new TabStripSettings();
     }
 
     private static HotkeySettings CloneHotkeys(HotkeySettings source) => new()
@@ -75,6 +78,7 @@ public static class SettingsArchive
         public int Version { get; set; }
         public OverlayLayout? Overlay { get; set; }
         public HotkeySettings? Hotkeys { get; set; }
+        public TabStripSettings? TabStrip { get; set; }
     }
 
     private sealed class OverlayLayout

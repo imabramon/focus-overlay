@@ -19,6 +19,23 @@ public sealed class HotkeySettings
     public string ScrollDown { get; set; } = "Ctrl+Alt+OemCloseBrackets";
 }
 
+public sealed class TabStripSettings
+{
+    public bool Visible { get; set; } = true;
+    public bool Detached { get; set; }
+    public OverlayCorner Corner { get; set; } = OverlayCorner.TopLeft;
+    public double OffsetX { get; set; } = 24;
+    public double OffsetY { get; set; } = 24;
+    public double Width { get; set; } = 420;
+    public double Scale { get; set; } = 1.0;
+    public double FontSize { get; set; } = 12;
+    public double BackgroundOpacity { get; set; } = 0.35;
+    public string TextColor { get; set; } = "#F0E6D2";
+    public string AccentColor { get; set; } = "#E0A040";
+
+    public TabStripSettings Clone() => (TabStripSettings)MemberwiseClone();
+}
+
 public sealed class AppSettings : ObservableObject
 {
     private double _scale = 1.0;
@@ -36,6 +53,7 @@ public sealed class AppSettings : ObservableObject
     public int ActivePresetIndex { get; set; }
     public int ActivePageIndex { get; set; }
     public HotkeySettings Hotkeys { get; set; } = new();
+    public TabStripSettings TabStrip { get; set; } = new();
 
     public double Scale
     {
@@ -48,4 +66,19 @@ public sealed class AppSettings : ObservableObject
         get => _overlayVisible;
         set => SetField(ref _overlayVisible, value);
     }
+
+    public AppSettings CloneDisplay() => new()
+    {
+        Corner = Corner,
+        OffsetX = OffsetX,
+        OffsetY = OffsetY,
+        Width = Width,
+        Height = Height,
+        FontSize = FontSize,
+        BackgroundOpacity = BackgroundOpacity,
+        TextColor = TextColor,
+        AccentColor = AccentColor,
+        Scale = Scale,
+        OverlayVisible = OverlayVisible,
+    };
 }
