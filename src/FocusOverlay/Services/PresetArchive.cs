@@ -33,13 +33,49 @@ public static class PresetArchive
         }
 
         using var archive = ZipFile.Open(path, ZipArchiveMode.Create);
+        WriteTo(archive, preset, string.Empty);
+    }
+
+    public static Preset Import(string path)
+    {
+        using var archive = ZipFile.OpenRead(path);
+        if (archive.GetEntry(ManifestName) != null)
+        {
+            return ReadFrom(archive, string.Empty);
+        }
+
+        var preset = new Preset { Name = Path.GetFileNameWithoutExtension(path) };
+        var markdownEntries = archive.Entries
+            .Where(entry => entry.FullName.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+            .OrderBy(entry => entry.FullName, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var entry in markdownEntries)
+        {
+            preset.Pages.Add(new OverlayPage
+            {
+                Title = Path.GetFileNameWithoutExtension(entry.Name),
+                Content = ReadText(entry),
+            });
+        }
+
+        if (preset.Pages.Count == 0)
+        {
+            throw new InvalidDataException("В архиве нет manifest.json и .md файлов");
+        }
+
+        ExtractAssets(archive, preset, string.Empty);
+        return preset;
+    }
+
+    public static void WriteTo(ZipArchive archive, Preset preset, string prefix)
+    {
         var manifest = new PresetManifest { Format = FormatId, Version = FormatVersion, Name = preset.Name };
 
         for (var i = 0; i < preset.Pages.Count; i++)
         {
             var page = preset.Pages[i];
             var entryName = $"pages/{i + 1:D2}.md";
-            WriteText(archive, entryName, page.Content);
+            WriteText(archive, prefix + entryName, page.Content);
             manifest.Pages.Add(new PresetManifestPage { Title = page.Title, File = entryName });
         }
 
@@ -49,86 +85,71 @@ public static class PresetArchive
             foreach (var file in Directory.EnumerateFiles(assetsDirectory, "*", SearchOption.AllDirectories))
             {
                 var relative = Path.GetRelativePath(assetsDirectory, file).Replace(Path.DirectorySeparatorChar, '/');
-                archive.CreateEntryFromFile(file, AssetsPrefix + relative, CompressionLevel.Optimal);
+                archive.CreateEntryFromFile(file, prefix + AssetsPrefix + relative, CompressionLevel.Optimal);
             }
         }
 
-        WriteText(archive, ManifestName, JsonSerializer.Serialize(manifest, _options));
+        WriteText(archive, prefix + ManifestName, JsonSerializer.Serialize(manifest, _options));
     }
 
-    public static Preset Import(string path)
+    public static Preset ReadFrom(ZipArchive archive, string prefix)
     {
-        using var archive = ZipFile.OpenRead(path);
-        var preset = new Preset { Name = Path.GetFileNameWithoutExtension(path) };
+        var manifestEntry = archive.GetEntry(prefix + ManifestName)
+            ?? throw new InvalidDataException($"В архиве нет {prefix}{ManifestName}");
+        var manifest = JsonSerializer.Deserialize<PresetManifest>(ReadText(manifestEntry), _options)
+            ?? throw new InvalidDataException("Не удалось прочитать manifest.json");
 
-        var manifestEntry = archive.GetEntry(ManifestName);
-        if (manifestEntry != null)
+        if (manifest.Format != FormatId)
         {
-            var manifest = JsonSerializer.Deserialize<PresetManifest>(ReadText(manifestEntry), _options)
-                ?? throw new InvalidDataException("Не удалось прочитать manifest.json");
-
-            if (manifest.Format != FormatId)
-            {
-                throw new InvalidDataException("Архив не является пресетом Focus Overlay");
-            }
-
-            if (manifest.Version > FormatVersion)
-            {
-                throw new InvalidDataException($"Пресет создан более новой версией (формат v{manifest.Version})");
-            }
-
-            if (!string.IsNullOrWhiteSpace(manifest.Name))
-            {
-                preset.Name = manifest.Name;
-            }
-
-            foreach (var page in manifest.Pages)
-            {
-                var entry = archive.GetEntry(page.File);
-                preset.Pages.Add(new OverlayPage
-                {
-                    Title = string.IsNullOrWhiteSpace(page.Title) ? "Без названия" : page.Title,
-                    Content = entry != null ? ReadText(entry) : string.Empty,
-                });
-            }
-        }
-        else
-        {
-            var markdownEntries = archive.Entries
-                .Where(entry => entry.FullName.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
-                .OrderBy(entry => entry.FullName, StringComparer.OrdinalIgnoreCase);
-
-            foreach (var entry in markdownEntries)
-            {
-                preset.Pages.Add(new OverlayPage
-                {
-                    Title = Path.GetFileNameWithoutExtension(entry.Name),
-                    Content = ReadText(entry),
-                });
-            }
-
-            if (preset.Pages.Count == 0)
-            {
-                throw new InvalidDataException("В архиве нет manifest.json и .md файлов");
-            }
+            throw new InvalidDataException("Архив не является пресетом Focus Overlay");
         }
 
-        ExtractAssets(archive, preset);
+        if (manifest.Version > FormatVersion)
+        {
+            throw new InvalidDataException($"Пресет создан более новой версией (формат v{manifest.Version})");
+        }
+
+        var preset = new Preset { Name = string.IsNullOrWhiteSpace(manifest.Name) ? "Пресет" : manifest.Name };
+        foreach (var page in manifest.Pages)
+        {
+            var entry = archive.GetEntry(prefix + page.File);
+            preset.Pages.Add(new OverlayPage
+            {
+                Title = string.IsNullOrWhiteSpace(page.Title) ? "Без названия" : page.Title,
+                Content = entry != null ? ReadText(entry) : string.Empty,
+            });
+        }
+
+        ExtractAssets(archive, preset, prefix);
         return preset;
     }
 
-    private static void ExtractAssets(ZipArchive archive, Preset preset)
+    public static void WriteText(ZipArchive archive, string entryName, string content)
+    {
+        var entry = archive.CreateEntry(entryName, CompressionLevel.Optimal);
+        using var writer = new StreamWriter(entry.Open(), new UTF8Encoding(false));
+        writer.Write(content);
+    }
+
+    public static string ReadText(ZipArchiveEntry entry)
+    {
+        using var reader = new StreamReader(entry.Open(), Encoding.UTF8, true);
+        return reader.ReadToEnd();
+    }
+
+    private static void ExtractAssets(ZipArchive archive, Preset preset, string prefix)
     {
         var assetsDirectory = Path.GetFullPath(StateStore.GetAssetsDirectory(preset));
+        var entryPrefix = prefix + AssetsPrefix;
 
         foreach (var entry in archive.Entries)
         {
-            if (!entry.FullName.StartsWith(AssetsPrefix, StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(entry.Name))
+            if (!entry.FullName.StartsWith(entryPrefix, StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(entry.Name))
             {
                 continue;
             }
 
-            var relative = entry.FullName[AssetsPrefix.Length..].Replace('/', Path.DirectorySeparatorChar);
+            var relative = entry.FullName[entryPrefix.Length..].Replace('/', Path.DirectorySeparatorChar);
             var target = Path.GetFullPath(Path.Combine(assetsDirectory, relative));
             if (!target.StartsWith(assetsDirectory + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
             {
@@ -138,19 +159,6 @@ public static class PresetArchive
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);
             entry.ExtractToFile(target, true);
         }
-    }
-
-    private static void WriteText(ZipArchive archive, string entryName, string content)
-    {
-        var entry = archive.CreateEntry(entryName, CompressionLevel.Optimal);
-        using var writer = new StreamWriter(entry.Open(), new UTF8Encoding(false));
-        writer.Write(content);
-    }
-
-    private static string ReadText(ZipArchiveEntry entry)
-    {
-        using var reader = new StreamReader(entry.Open(), Encoding.UTF8, true);
-        return reader.ReadToEnd();
     }
 
     private sealed class PresetManifest

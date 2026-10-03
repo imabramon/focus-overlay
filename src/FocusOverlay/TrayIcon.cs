@@ -25,6 +25,9 @@ public sealed class TrayIcon : IDisposable
         menu.Items.Add("Импорт пресета…", null, (_, _) => _controller.ImportPreset(null));
         menu.Items.Add("Импорт папки с .md…", null, (_, _) => _controller.ImportPresetFolder(null));
         menu.Items.Add("Экспорт текущего пресета…", null, (_, _) => _controller.ExportPreset(_controller.State.ActivePreset, null));
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add("Экспорт всего (настройки + пресеты)…", null, (_, _) => _controller.ExportBackup(null));
+        menu.Items.Add("Импорт всего…", null, (_, _) => _controller.ImportBackup(null));
         menu.Items.Add("Открыть папку данных", null, (_, _) => OpenDataFolder());
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Выход", null, (_, _) => _controller.Exit());

@@ -21,7 +21,12 @@ public static class SettingsArchive
         Converters = { new JsonStringEnumConverter() },
     };
 
-    public static void Export(AppSettings settings, string path)
+    public static void Export(AppSettings settings, string path) =>
+        File.WriteAllText(path, ToJson(settings), new UTF8Encoding(false));
+
+    public static void Import(string path, AppSettings target) => ApplyJson(File.ReadAllText(path), target);
+
+    public static string ToJson(AppSettings settings)
     {
         var file = new SettingsFile
         {
@@ -31,12 +36,12 @@ public static class SettingsArchive
             Hotkeys = CloneHotkeys(settings.Hotkeys),
             TabStrip = settings.TabStrip.Clone(),
         };
-        File.WriteAllText(path, JsonSerializer.Serialize(file, _options), new UTF8Encoding(false));
+        return JsonSerializer.Serialize(file, _options);
     }
 
-    public static void Import(string path, AppSettings target)
+    public static void ApplyJson(string json, AppSettings target)
     {
-        var file = JsonSerializer.Deserialize<SettingsFile>(File.ReadAllText(path), _options)
+        var file = JsonSerializer.Deserialize<SettingsFile>(json, _options)
             ?? throw new InvalidDataException("Файл пуст");
 
         if (file.Format != FormatId)
@@ -70,6 +75,8 @@ public static class SettingsArchive
         ZoomOut = source.ZoomOut,
         ScrollUp = source.ScrollUp,
         ScrollDown = source.ScrollDown,
+        NextPreset = source.NextPreset,
+        PrevPreset = source.PrevPreset,
     };
 
     private sealed class SettingsFile

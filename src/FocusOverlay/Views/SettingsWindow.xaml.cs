@@ -103,6 +103,10 @@ public partial class SettingsWindow : Window
 
     private void OnExportClick(object sender, RoutedEventArgs e) => _controller.ExportSettings(this);
 
+    private void OnExportAllClick(object sender, RoutedEventArgs e) => _controller.ExportBackup(this);
+
+    private void OnImportAllClick(object sender, RoutedEventArgs e) => _controller.ImportBackup(this);
+
     private void OnResetClick(object sender, RoutedEventArgs e)
     {
         var answer = MessageBox.Show(this, "Сбросить положение, вид и горячие клавиши к значениям по умолчанию?", Title,
@@ -130,6 +134,8 @@ public partial class SettingsWindow : Window
             ("Масштаб −", () => hotkeys.ZoomOut, value => hotkeys.ZoomOut = value),
             ("Прокрутка вверх", () => hotkeys.ScrollUp, value => hotkeys.ScrollUp = value),
             ("Прокрутка вниз", () => hotkeys.ScrollDown, value => hotkeys.ScrollDown = value),
+            ("Следующий пресет", () => hotkeys.NextPreset, value => hotkeys.NextPreset = value),
+            ("Предыдущий пресет", () => hotkeys.PrevPreset, value => hotkeys.PrevPreset = value),
         };
 
         foreach (var (label, get, set) in rows)

@@ -13,6 +13,7 @@ namespace FocusOverlay;
 public sealed class OverlayController : IDisposable
 {
     private const double ZoomStep = 0.1;
+    private const double StripGap = 4;
 
     private readonly AppState _state;
     private readonly OverlayWindow _overlay = new();
@@ -72,6 +73,8 @@ public sealed class OverlayController : IDisposable
             (hotkeys.ZoomOut, () => Zoom(-ZoomStep), true),
             (hotkeys.ScrollUp, () => _overlay.ScrollBy(-Settings.FontSize * 4), true),
             (hotkeys.ScrollDown, () => _overlay.ScrollBy(Settings.FontSize * 4), true),
+            (hotkeys.NextPreset, () => ChangePreset(1), false),
+            (hotkeys.PrevPreset, () => ChangePreset(-1), false),
         };
 
         return bindings
@@ -122,12 +125,13 @@ public sealed class OverlayController : IDisposable
         var page = pageIndex < preset.Pages.Count ? preset.Pages[pageIndex] : null;
         var effective = PageDisplaySettings.Resolve(Settings, page?.Content);
         var strip = Settings.TabStrip;
-        var stripHeight = strip.Visible ? _tabStrip.Apply(Settings, preset, pageIndex) : 0;
-        var sharesAnchor = !strip.Detached
-            && effective.Corner == Settings.Corner
-            && effective.OffsetX.Equals(Settings.OffsetX)
-            && effective.OffsetY.Equals(Settings.OffsetY);
-        _overlay.Apply(effective, preset, page, sharesAnchor ? stripHeight : 0);
+        var stripHeight = strip.Visible ? _tabStrip.Apply(Settings, preset, pageIndex, _state.Presets.Count) : 0;
+        var stripCorner = strip.Detached ? strip.Corner : Settings.Corner;
+        var stripOffsetY = strip.Detached ? strip.OffsetY : Settings.OffsetY;
+        var minOffsetY = stripHeight > 0 && stripCorner == effective.Corner
+            ? stripOffsetY + stripHeight + StripGap * Settings.Scale
+            : 0;
+        _overlay.Apply(effective, preset, page, minOffsetY);
         UpdateVisibility();
     }
 
@@ -239,6 +243,93 @@ public sealed class OverlayController : IDisposable
         }
     }
 
+    public void ExportBackup(Window? owner)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = BackupArchive.DialogFilter,
+            Title = "Экспорт настроек и всех пресетов",
+            FileName = $"focus-overlay-{DateTime.Now:yyyy-MM-dd}{BackupArchive.FileExtension}",
+            DefaultExt = BackupArchive.FileExtension,
+        };
+
+        if (!ShowDialog(dialog, owner))
+        {
+            return;
+        }
+
+        try
+        {
+            Save();
+            BackupArchive.Export(_state, dialog.FileName);
+        }
+        catch (Exception ex)
+        {
+            ShowError(owner, $"Не удалось сохранить резервную копию:\n{ex.Message}");
+        }
+    }
+
+    public void ImportBackup(Window? owner)
+    {
+        var dialog = new OpenFileDialog { Filter = BackupArchive.DialogFilter, Title = "Импорт настроек и всех пресетов" };
+        if (!ShowDialog(dialog, owner))
+        {
+            return;
+        }
+
+        var answer = Ask(
+            owner,
+            "Заменить текущие пресеты пресетами из копии?\n\n"
+            + "Да — заменить (текущие пресеты и их картинки будут удалены)\n"
+            + "Нет — добавить к текущим\n\n"
+            + "Настройки и горячие клавиши будут заменены в любом случае.",
+            MessageBoxButton.YesNoCancel);
+
+        if (answer is not (MessageBoxResult.Yes or MessageBoxResult.No))
+        {
+            return;
+        }
+
+        try
+        {
+            var backup = BackupArchive.Read(dialog.FileName);
+            SettingsArchive.ApplyJson(backup.SettingsJson, Settings);
+
+            if (answer == MessageBoxResult.Yes)
+            {
+                var previous = _state.Presets.ToList();
+                _state.Presets.Clear();
+                foreach (var preset in backup.Presets)
+                {
+                    _state.Presets.Add(preset);
+                }
+
+                foreach (var preset in previous)
+                {
+                    TryDeleteAssets(preset);
+                }
+
+                Settings.ActivePresetIndex = backup.ActivePresetIndex;
+                Settings.ActivePageIndex = backup.ActivePageIndex;
+            }
+            else
+            {
+                foreach (var preset in backup.Presets)
+                {
+                    preset.Name = MakeUniqueName(preset.Name);
+                    _state.Presets.Add(preset);
+                }
+            }
+
+            ApplySettingsReplacement(owner);
+            ActiveChanged?.Invoke();
+        }
+        catch (Exception ex)
+        {
+            ShowError(owner, $"Не удалось загрузить резервную копию:\n{ex.Message}");
+        }
+    }
+
     public void ResetSettings()
     {
         SettingsArchive.ResetToDefaults(Settings);
@@ -334,6 +425,28 @@ public sealed class OverlayController : IDisposable
         ApplyActiveChange();
     }
 
+    private void ChangePreset(int delta)
+    {
+        var count = _state.Presets.Count;
+        if (count <= 1)
+        {
+            return;
+        }
+
+        SelectPreset(((Settings.ActivePresetIndex + delta) % count + count) % count);
+    }
+
+    private static void TryDeleteAssets(Preset preset)
+    {
+        try
+        {
+            StateStore.DeleteAssets(preset);
+        }
+        catch (Exception)
+        {
+        }
+    }
+
     private void Zoom(double delta)
     {
         Settings.Scale = Math.Round(Math.Clamp(Settings.Scale + delta, 0.5, 3.0), 2);
@@ -397,6 +510,11 @@ public sealed class OverlayController : IDisposable
 
     private static bool ShowDialog(CommonDialog dialog, Window? owner) =>
         (owner != null ? dialog.ShowDialog(owner) : dialog.ShowDialog()) == true;
+
+    private static MessageBoxResult Ask(Window? owner, string message, MessageBoxButton buttons) =>
+        owner != null
+            ? MessageBox.Show(owner, message, "Focus Overlay", buttons, MessageBoxImage.Question)
+            : MessageBox.Show(message, "Focus Overlay", buttons, MessageBoxImage.Question);
 
     private static void ShowError(Window? owner, string message)
     {

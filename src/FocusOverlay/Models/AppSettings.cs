@@ -11,12 +11,14 @@ public enum OverlayCorner
 public sealed class HotkeySettings
 {
     public string Toggle { get; set; } = "Ctrl+Alt+O";
-    public string NextPage { get; set; } = "Ctrl+Alt+PageDown";
-    public string PrevPage { get; set; } = "Ctrl+Alt+PageUp";
+    public string NextPage { get; set; } = "Ctrl+Alt+Right";
+    public string PrevPage { get; set; } = "Ctrl+Alt+Left";
     public string ZoomIn { get; set; } = "Ctrl+Alt+OemPlus";
     public string ZoomOut { get; set; } = "Ctrl+Alt+OemMinus";
-    public string ScrollUp { get; set; } = "Ctrl+Alt+OemOpenBrackets";
-    public string ScrollDown { get; set; } = "Ctrl+Alt+OemCloseBrackets";
+    public string ScrollUp { get; set; } = "Ctrl+Alt+Up";
+    public string ScrollDown { get; set; } = "Ctrl+Alt+Down";
+    public string NextPreset { get; set; } = "Ctrl+Alt+P";
+    public string PrevPreset { get; set; } = string.Empty;
 }
 
 public sealed class TabStripSettings

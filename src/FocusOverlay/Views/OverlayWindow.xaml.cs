@@ -10,7 +10,6 @@ namespace FocusOverlay.Views;
 
 public partial class OverlayWindow : ClickThroughWindow
 {
-    private const double StripGap = 4;
     private const double MinContentHeight = 60;
 
     private OverlayPage? _renderedPage;
@@ -21,16 +20,17 @@ public partial class OverlayWindow : ClickThroughWindow
         InitializeComponent();
     }
 
-    public void Apply(AppSettings settings, Preset preset, OverlayPage? page, double stripHeight)
+    public void Apply(AppSettings settings, Preset preset, OverlayPage? page, double minOffsetY)
     {
         var textColor = TextColorOf(settings);
         var accentColor = AccentColorOf(settings);
-        var reserved = stripHeight > 0 ? stripHeight + StripGap * settings.Scale : 0;
+        var offsetY = Math.Max(settings.OffsetY, minOffsetY);
+        var shift = offsetY - settings.OffsetY;
 
         RootScale.ScaleX = settings.Scale;
         RootScale.ScaleY = settings.Scale;
         Width = settings.Width * settings.Scale;
-        Height = Math.Max(MinContentHeight, settings.Height * settings.Scale - reserved);
+        Height = Math.Max(MinContentHeight, settings.Height * settings.Scale - shift);
         FrameBorder.Background = BackgroundOf(settings);
 
         var theme = new MarkdownTheme(
@@ -51,7 +51,7 @@ public partial class OverlayWindow : ClickThroughWindow
         DocumentViewer.Document = MarkdownRenderer.Render(markdown, theme);
         Dispatcher.InvokeAsync(() => GetScroll()?.ScrollToVerticalOffset(offset), DispatcherPriority.Loaded);
 
-        PlaceInCorner(settings.Corner, settings.OffsetX, settings.OffsetY + reserved);
+        PlaceInCorner(settings.Corner, settings.OffsetX, offsetY);
     }
 
     public void ScrollBy(double delta)

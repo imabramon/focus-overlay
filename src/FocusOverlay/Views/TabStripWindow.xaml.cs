@@ -15,7 +15,7 @@ public partial class TabStripWindow : ClickThroughWindow
 
     public bool HasTabs { get; private set; }
 
-    public double Apply(AppSettings settings, Preset preset, int activeIndex)
+    public double Apply(AppSettings settings, Preset preset, int activeIndex, int presetCount)
     {
         var strip = settings.TabStrip;
         var text = FrozenBrush(ParseColor(strip.TextColor, Color.FromRgb(0xF0, 0xE6, 0xD2)));
@@ -49,7 +49,8 @@ public partial class TabStripWindow : ClickThroughWindow
         }
 
         HasTabs = preset.Pages.Count > 0;
-        PageCounter.Text = HasTabs ? $"{activeIndex + 1}/{preset.Pages.Count}" : string.Empty;
+        var counter = HasTabs ? $"{activeIndex + 1}/{preset.Pages.Count}" : string.Empty;
+        PageCounter.Text = presetCount > 1 ? $"{preset.Name} · {counter}" : counter;
         PageCounter.FontSize = fontSize;
         PageCounter.Foreground = text;
 

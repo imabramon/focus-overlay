@@ -14,6 +14,8 @@ public sealed class AppState
     {
         Settings ??= new AppSettings();
         Settings.Hotkeys ??= new HotkeySettings();
+        Settings.Hotkeys.NextPreset ??= string.Empty;
+        Settings.Hotkeys.PrevPreset ??= string.Empty;
         Settings.TabStrip ??= new TabStripSettings();
         Presets ??= new ObservableCollection<Preset>();
 
@@ -65,7 +67,8 @@ public sealed class AppState
                 - Двойной клик по иконке в трее — **редактор**
                 - Правый клик — меню и **настройки**
                 - `Ctrl+Alt+O` — показать / скрыть
-                - `Ctrl+Alt+PageUp` / `PageDown` — вкладки
+                - `Ctrl+Alt+←` / `→` — вкладки
+                - `Ctrl+Alt+P` — следующий пресет
                 """,
         });
         return preset;
