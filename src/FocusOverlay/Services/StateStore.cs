@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FocusOverlay.Models;
@@ -108,12 +109,29 @@ public static class StateStore
         var directory = Path.GetFullPath(GetAssetsDirectory(preset));
         var relative = Uri.UnescapeDataString(source).Replace('/', Path.DirectorySeparatorChar);
         var fullPath = Path.GetFullPath(Path.Combine(directory, relative));
-        if (!fullPath.StartsWith(directory, StringComparison.OrdinalIgnoreCase) || !File.Exists(fullPath))
+        if (!fullPath.StartsWith(directory, StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }
 
-        return new Uri(fullPath);
+        if (File.Exists(fullPath))
+        {
+            return new Uri(fullPath);
+        }
+
+        var byName = FindAssetByName(directory, Path.GetFileName(fullPath));
+        return byName != null ? new Uri(byName) : null;
+    }
+
+    private static string? FindAssetByName(string directory, string fileName)
+    {
+        if (fileName.Length == 0 || !Directory.Exists(directory))
+        {
+            return null;
+        }
+
+        return Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories)
+            .FirstOrDefault(path => string.Equals(Path.GetFileName(path), fileName, StringComparison.OrdinalIgnoreCase));
     }
 
     private static string MakeUniqueFileName(string directory, string fileName)

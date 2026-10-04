@@ -63,7 +63,11 @@
                              Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
                 <TextBlock DockPanel.Dock="Bottom" Margin="0,4,0,0" Foreground="Gray" TextWrapping="Wrap"
-                           Text="Markdown: **жирный**, *курсив*, ==выделение==, - [ ] задачи, таблицы. Картинка с размером: ![имя|32](файл.png), Ctrl+V вставляет из буфера. Параметры таблицы: {widths=&quot;120,1*&quot; borders=rows} через пустую строку над ней. Вид вкладки: блок ```focus-overlay. Полное описание: docs/markup.md в репозитории." />
+                           Text="Markdown: **жирный**, *курсив*, ==выделение==, - [ ] задачи, таблицы. Картинка с размером: ![имя|32](файл.png) — без пробелов в пути (пробел → %20) — или ![[файл с пробелами.png]] (без размера), Ctrl+V вставляет из буфера. Параметры таблицы: {widths=&quot;120,1*&quot; borders=rows} через пустую строку над ней. Вид вкладки: блок ```focus-overlay. Полное описание: docs/markup.md в репозитории." />
+                <ListBox x:Name="IssueList" DockPanel.Dock="Bottom" Margin="0,4,0,0" MaxHeight="110"
+                         Foreground="#B00020" DisplayMemberPath="Text" Visibility="Collapsed"
+                         ToolTip="Двойной клик — перейти к строке"
+                         MouseDoubleClick="OnIssueDoubleClick" />
                 <TextBox x:Name="ContentBox"
                          Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
                          AcceptsReturn="True"

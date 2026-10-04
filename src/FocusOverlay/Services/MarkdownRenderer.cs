@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Markdig;
+using Markdig.Parsers.Inlines;
 using Md = Markdig.Syntax;
 using MdInlines = Markdig.Syntax.Inlines;
 using MdTables = Markdig.Extensions.Tables;
@@ -30,13 +31,7 @@ public sealed record MarkdownTheme(
 
 public static class MarkdownRenderer
 {
-    private static readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
-        .UsePipeTables()
-        .UseTaskLists()
-        .UseEmphasisExtras()
-        .UseAutoLinks()
-        .UseSoftlineBreakAsHardlineBreak()
-        .Build();
+    private static readonly MarkdownPipeline _pipeline = CreatePipeline();
 
     private static readonly FontFamily _textFont = new("Segoe UI");
     private static readonly FontFamily _codeFont = new("Consolas");
@@ -47,6 +42,20 @@ public static class MarkdownRenderer
     private static readonly Regex _optionsLinePattern = new(@"^\s*\{(?<body>[^{}]*)\}\s*$", RegexOptions.Compiled);
     private static readonly Regex _optionPattern = new(@"(?<key>[A-Za-z][\w-]*)\s*=\s*(?:""(?<value>[^""]*)""|'(?<value>[^']*)'|(?<value>[^\s""']+))", RegexOptions.Compiled);
     private static readonly Regex _imageSizePattern = new(@"^(?<alt>.*?)\s*\|\s*(?<width>\d+(?:[.,]\d+)?)?\s*(?:[xх×]\s*(?<height>\d+(?:[.,]\d+)?))?\s*$", RegexOptions.Compiled);
+
+    public static MarkdownPipeline Pipeline => _pipeline;
+
+    private static MarkdownPipeline CreatePipeline()
+    {
+        var builder = new MarkdownPipelineBuilder()
+            .UsePipeTables()
+            .UseTaskLists()
+            .UseEmphasisExtras()
+            .UseAutoLinks()
+            .UseSoftlineBreakAsHardlineBreak();
+        builder.InlineParsers.InsertBefore<LinkInlineParser>(new WikiImageParser());
+        return builder.Build();
+    }
 
     public static FlowDocument Render(string markdown, MarkdownTheme theme)
     {

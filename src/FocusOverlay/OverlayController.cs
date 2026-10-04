@@ -470,11 +470,36 @@ public sealed class OverlayController : IDisposable
             _state.Presets.Add(preset);
             SelectPreset(_state.Presets.Count - 1);
             Save();
+            ShowImportIssues(preset, owner);
         }
         catch (Exception ex)
         {
             ShowError(owner, $"Не удалось импортировать пресет:\n{ex.Message}");
         }
+    }
+
+    private static void ShowImportIssues(Preset preset, Window? owner)
+    {
+        const int limit = 20;
+        var issues = preset.Pages
+            .SelectMany(page => MarkdownDiagnostics.Analyze(preset, page.Content).Select(issue => $"«{page.Title}» — {issue.Text}"))
+            .ToList();
+
+        if (issues.Count == 0)
+        {
+            return;
+        }
+
+        var details = string.Join("\n", issues.Take(limit));
+        if (issues.Count > limit)
+        {
+            details += $"\n… и ещё {issues.Count - limit}";
+        }
+
+        ShowMessage(
+            owner,
+            $"Пресет «{preset.Name}» импортирован, но в нём есть ошибки:\n\n{details}\n\nОни также показываются в редакторе под текстом вкладки.",
+            MessageBoxImage.Warning);
     }
 
     private void ApplySettingsReplacement(Window? owner)
@@ -516,15 +541,17 @@ public sealed class OverlayController : IDisposable
             ? MessageBox.Show(owner, message, "Focus Overlay", buttons, MessageBoxImage.Question)
             : MessageBox.Show(message, "Focus Overlay", buttons, MessageBoxImage.Question);
 
-    private static void ShowError(Window? owner, string message)
+    private static void ShowError(Window? owner, string message) => ShowMessage(owner, message, MessageBoxImage.Error);
+
+    private static void ShowMessage(Window? owner, string message, MessageBoxImage image)
     {
         if (owner != null)
         {
-            MessageBox.Show(owner, message, "Focus Overlay", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(owner, message, "Focus Overlay", MessageBoxButton.OK, image);
         }
         else
         {
-            MessageBox.Show(message, "Focus Overlay", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(message, "Focus Overlay", MessageBoxButton.OK, image);
         }
     }
 }

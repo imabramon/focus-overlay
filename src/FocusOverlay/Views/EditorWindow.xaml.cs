@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using FocusOverlay.Models;
 using FocusOverlay.Services;
 using Microsoft.Win32;
@@ -16,12 +17,19 @@ namespace FocusOverlay.Views;
 public partial class EditorWindow : Window
 {
     private readonly OverlayController _controller;
+    private readonly DispatcherTimer _issuesTimer = new() { Interval = TimeSpan.FromMilliseconds(300) };
     private bool _syncing;
 
     public EditorWindow(OverlayController controller)
     {
         _controller = controller;
         InitializeComponent();
+
+        _issuesTimer.Tick += (_, _) =>
+        {
+            _issuesTimer.Stop();
+            UpdateIssues();
+        };
 
         PresetCombo.ItemsSource = controller.State.Presets;
         SyncSelection();
@@ -34,12 +42,57 @@ public partial class EditorWindow : Window
         ContentBox.PreviewDrop += OnContentDrop;
 
         _controller.ActiveChanged += SyncSelection;
-        Closed += (_, _) => _controller.ActiveChanged -= SyncSelection;
+        Closed += (_, _) =>
+        {
+            _controller.ActiveChanged -= SyncSelection;
+            _issuesTimer.Stop();
+        };
     }
 
     private Preset ActivePreset => _controller.State.ActivePreset;
 
-    private void OnAnyChange(object sender, RoutedEventArgs e) => _controller.ScheduleRefresh();
+    private void OnAnyChange(object sender, RoutedEventArgs e)
+    {
+        _controller.ScheduleRefresh();
+        _issuesTimer.Stop();
+        _issuesTimer.Start();
+    }
+
+    private void UpdateIssues()
+    {
+        var issues = PageList.SelectedItem is OverlayPage page
+            ? MarkdownDiagnostics.Analyze(ActivePreset, page.Content)
+            : Array.Empty<MarkdownIssue>();
+        IssueList.ItemsSource = issues;
+        IssueList.Visibility = issues.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void OnIssueDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (IssueList.SelectedItem is not MarkdownIssue issue)
+        {
+            return;
+        }
+
+        var text = ContentBox.Text;
+        var start = 0;
+        for (var line = 0; line < issue.Line; line++)
+        {
+            var next = text.IndexOf('\n', start);
+            if (next < 0)
+            {
+                return;
+            }
+
+            start = next + 1;
+        }
+
+        var end = text.IndexOf('\n', start);
+        var length = (end < 0 ? text.Length : end) - start;
+        ContentBox.Focus();
+        ContentBox.Select(start, Math.Max(0, length - (length > 0 && text[start + length - 1] == '\r' ? 1 : 0)));
+        ContentBox.ScrollToLine(ContentBox.GetLineIndexFromCharacterIndex(start));
+    }
 
     private void SyncSelection()
     {
@@ -61,6 +114,8 @@ public partial class EditorWindow : Window
         {
             _syncing = false;
         }
+
+        UpdateIssues();
     }
 
     private void OnPresetSelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -17,7 +17,9 @@ public class ClickThroughWindow : Window
     private const int WsExNoActivate = 0x08000000;
     private const uint SwpNoSize = 0x0001;
     private const uint SwpNoMove = 0x0002;
+    private const uint SwpNoZOrder = 0x0004;
     private const uint SwpNoActivate = 0x0010;
+    private const uint MonitorDefaultToPrimary = 0x00000001;
     private static readonly IntPtr HwndTopmost = new(-1);
 
     private readonly DispatcherTimer _topmostTimer = new() { Interval = TimeSpan.FromSeconds(2) };
@@ -61,8 +63,29 @@ public class ClickThroughWindow : Window
         var isRight = corner is OverlayCorner.TopRight or OverlayCorner.BottomRight;
         var isBottom = corner is OverlayCorner.BottomLeft or OverlayCorner.BottomRight;
 
-        Left = isRight ? SystemParameters.PrimaryScreenWidth - Width - offsetX : offsetX;
-        Top = isBottom ? SystemParameters.PrimaryScreenHeight - Height - offsetY : offsetY;
+        var handle = new WindowInteropHelper(this).EnsureHandle();
+        var monitor = MonitorFromPoint(default, MonitorDefaultToPrimary);
+        var info = new MonitorInfo { Size = Marshal.SizeOf<MonitorInfo>() };
+        if (monitor == IntPtr.Zero || !GetMonitorInfo(monitor, ref info) || GetDpiForMonitor(monitor, 0, out var dpi, out _) != 0)
+        {
+            Left = isRight ? SystemParameters.PrimaryScreenWidth - Width - offsetX : offsetX;
+            Top = isBottom ? SystemParameters.PrimaryScreenHeight - Height - offsetY : offsetY;
+            return;
+        }
+
+        var factor = dpi / 96.0;
+        var width = (int)Math.Round(Width * factor);
+        var height = (int)Math.Round(Height * factor);
+        var bounds = info.Monitor;
+        var x = isRight ? bounds.Right - width - (int)Math.Round(offsetX * factor) : bounds.Left + (int)Math.Round(offsetX * factor);
+        var y = isBottom ? bounds.Bottom - height - (int)Math.Round(offsetY * factor) : bounds.Top + (int)Math.Round(offsetY * factor);
+
+        var dpiChanges = GetDpiForWindow(handle) != dpi;
+        SetWindowPos(handle, IntPtr.Zero, x, y, width, height, SwpNoZOrder | SwpNoActivate);
+        if (dpiChanges)
+        {
+            SetWindowPos(handle, IntPtr.Zero, x, y, width, height, SwpNoZOrder | SwpNoActivate);
+        }
     }
 
     protected static Color ParseColor(string value, Color fallback)
@@ -113,4 +136,41 @@ public class ClickThroughWindow : Window
 
     [DllImport("user32.dll")]
     private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr MonitorFromPoint(NativePoint pt, uint dwFlags);
+
+    [DllImport("user32.dll")]
+    private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInfo lpmi);
+
+    [DllImport("user32.dll")]
+    private static extern uint GetDpiForWindow(IntPtr hWnd);
+
+    [DllImport("shcore.dll")]
+    private static extern int GetDpiForMonitor(IntPtr hMonitor, int dpiType, out uint dpiX, out uint dpiY);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativePoint
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeRect
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MonitorInfo
+    {
+        public int Size;
+        public NativeRect Monitor;
+        public NativeRect WorkArea;
+        public uint Flags;
+    }
 }
