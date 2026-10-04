@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 using FocusOverlay.Services;
 using FocusOverlay.Views;
 using Microsoft.Win32;
@@ -25,9 +26,9 @@ public sealed class OverlayController : IDisposable
     private EditorWindow? _editor;
     private SettingsWindow? _settingsWindow;
 
-    public OverlayController()
+    public OverlayController(AppState state)
     {
-        _state = StateStore.Load();
+        _state = state;
         _tray = new TrayIcon(this);
         _refreshTimer.Tick += (_, _) =>
         {
@@ -49,6 +50,8 @@ public sealed class OverlayController : IDisposable
 
     public AppSettings Settings => _state.Settings;
 
+    public bool RestartRequested { get; private set; }
+
     public void Start()
     {
         var failed = RegisterHotkeys();
@@ -56,7 +59,7 @@ public sealed class OverlayController : IDisposable
 
         if (failed.Count > 0)
         {
-            _tray.ShowWarning("Горячие клавиши заняты", string.Join(", ", failed));
+            _tray.ShowWarning(Strings.ControllerHotkeysBusy, string.Join(", ", failed));
         }
     }
 
@@ -248,7 +251,7 @@ public sealed class OverlayController : IDisposable
 
     public void ImportSettings(Window? owner)
     {
-        var dialog = new OpenFileDialog { Filter = SettingsArchive.DialogFilter, Title = "Импорт настроек" };
+        var dialog = new OpenFileDialog { Filter = SettingsArchive.DialogFilter, Title = Strings.ControllerImportSettingsTitle };
         if (!ShowDialog(dialog, owner))
         {
             return;
@@ -261,7 +264,7 @@ public sealed class OverlayController : IDisposable
         }
         catch (Exception ex)
         {
-            ShowError(owner, $"Не удалось импортировать настройки:\n{ex.Message}");
+            ShowError(owner, string.Format(Strings.ControllerImportSettingsFailed, ex.Message));
         }
     }
 
@@ -270,7 +273,7 @@ public sealed class OverlayController : IDisposable
         var dialog = new SaveFileDialog
         {
             Filter = SettingsArchive.DialogFilter,
-            Title = "Экспорт настроек",
+            Title = Strings.ControllerExportSettingsTitle,
             FileName = "focus-overlay-settings" + SettingsArchive.FileExtension,
             DefaultExt = SettingsArchive.FileExtension,
         };
@@ -286,7 +289,7 @@ public sealed class OverlayController : IDisposable
         }
         catch (Exception ex)
         {
-            ShowError(owner, $"Не удалось экспортировать настройки:\n{ex.Message}");
+            ShowError(owner, string.Format(Strings.ControllerExportSettingsFailed, ex.Message));
         }
     }
 
@@ -295,7 +298,7 @@ public sealed class OverlayController : IDisposable
         var dialog = new SaveFileDialog
         {
             Filter = BackupArchive.DialogFilter,
-            Title = "Экспорт настроек и всех пресетов",
+            Title = Strings.ControllerExportBackupTitle,
             FileName = $"focus-overlay-{DateTime.Now:yyyy-MM-dd}{BackupArchive.FileExtension}",
             DefaultExt = BackupArchive.FileExtension,
         };
@@ -312,13 +315,13 @@ public sealed class OverlayController : IDisposable
         }
         catch (Exception ex)
         {
-            ShowError(owner, $"Не удалось сохранить резервную копию:\n{ex.Message}");
+            ShowError(owner, string.Format(Strings.ControllerExportBackupFailed, ex.Message));
         }
     }
 
     public void ImportBackup(Window? owner)
     {
-        var dialog = new OpenFileDialog { Filter = BackupArchive.DialogFilter, Title = "Импорт настроек и всех пресетов" };
+        var dialog = new OpenFileDialog { Filter = BackupArchive.DialogFilter, Title = Strings.ControllerImportBackupTitle };
         if (!ShowDialog(dialog, owner))
         {
             return;
@@ -326,10 +329,7 @@ public sealed class OverlayController : IDisposable
 
         var answer = Ask(
             owner,
-            "Заменить текущие пресеты пресетами из копии?\n\n"
-            + "Да — заменить (текущие пресеты и их картинки будут удалены)\n"
-            + "Нет — добавить к текущим\n\n"
-            + "Настройки и горячие клавиши будут заменены в любом случае.",
+            Strings.ControllerImportBackupQuestion,
             MessageBoxButton.YesNoCancel);
 
         if (answer is not (MessageBoxResult.Yes or MessageBoxResult.No))
@@ -373,7 +373,7 @@ public sealed class OverlayController : IDisposable
         }
         catch (Exception ex)
         {
-            ShowError(owner, $"Не удалось загрузить резервную копию:\n{ex.Message}");
+            ShowError(owner, string.Format(Strings.ControllerImportBackupFailed, ex.Message));
         }
     }
 
@@ -385,7 +385,7 @@ public sealed class OverlayController : IDisposable
 
     public void ImportPreset(Window? owner)
     {
-        var dialog = new OpenFileDialog { Filter = PresetArchive.DialogFilter, Title = "Импорт пресета" };
+        var dialog = new OpenFileDialog { Filter = PresetArchive.DialogFilter, Title = Strings.ControllerImportPresetTitle };
         if (!ShowDialog(dialog, owner))
         {
             return;
@@ -396,7 +396,7 @@ public sealed class OverlayController : IDisposable
 
     public void ImportPresetFolder(Window? owner)
     {
-        var dialog = new OpenFolderDialog { Title = "Папка с .md файлами" };
+        var dialog = new OpenFolderDialog { Title = Strings.ControllerImportFolderTitle };
         if (!ShowDialog(dialog, owner))
         {
             return;
@@ -410,7 +410,7 @@ public sealed class OverlayController : IDisposable
         var dialog = new SaveFileDialog
         {
             Filter = PresetArchive.DialogFilter,
-            Title = "Экспорт пресета",
+            Title = Strings.ControllerExportPresetTitle,
             FileName = StateStore.SanitizeFileName(preset.Name) + PresetArchive.FileExtension,
             DefaultExt = PresetArchive.FileExtension,
         };
@@ -426,7 +426,7 @@ public sealed class OverlayController : IDisposable
         }
         catch (Exception ex)
         {
-            ShowError(owner, $"Не удалось экспортировать пресет:\n{ex.Message}");
+            ShowError(owner, string.Format(Strings.ControllerExportPresetFailed, ex.Message));
         }
     }
 
@@ -438,7 +438,7 @@ public sealed class OverlayController : IDisposable
         }
         catch (Exception ex)
         {
-            _tray.ShowWarning("Ошибка сохранения", ex.Message);
+            _tray.ShowWarning(Strings.ControllerSaveError, ex.Message);
         }
     }
 
@@ -447,6 +447,12 @@ public sealed class OverlayController : IDisposable
         _editor?.Close();
         _settingsWindow?.Close();
         Application.Current.Shutdown();
+    }
+
+    public void Restart()
+    {
+        RestartRequested = true;
+        Exit();
     }
 
     public void Dispose()
@@ -523,7 +529,7 @@ public sealed class OverlayController : IDisposable
         }
         catch (Exception ex)
         {
-            ShowError(owner, $"Не удалось импортировать пресет:\n{ex.Message}");
+            ShowError(owner, string.Format(Strings.ControllerImportPresetFailed, ex.Message));
         }
     }
 
@@ -533,7 +539,7 @@ public sealed class OverlayController : IDisposable
         var issues = MarkdownDiagnostics.AnalyzeSystem(preset.SystemContent)
             .Select(issue => $"{Preset.SystemFileName} — {issue.Text}")
             .Concat(preset.Pages.SelectMany(page => MarkdownDiagnostics.Analyze(preset, page.Content)
-                .Select(issue => $"«{page.Title}» — {issue.Text}")))
+                .Select(issue => string.Format(Strings.ControllerIssueInPage, page.Title, issue.Text))))
             .ToList();
 
         if (issues.Count == 0)
@@ -544,12 +550,12 @@ public sealed class OverlayController : IDisposable
         var details = string.Join("\n", issues.Take(limit));
         if (issues.Count > limit)
         {
-            details += $"\n… и ещё {issues.Count - limit}";
+            details += string.Format(Strings.ControllerIssuesMore, issues.Count - limit);
         }
 
         ShowMessage(
             owner,
-            $"Пресет «{preset.Name}» импортирован, но в нём есть ошибки:\n\n{details}\n\nОни также показываются в редакторе под текстом вкладки.",
+            string.Format(Strings.ControllerImportIssues, preset.Name, details),
             MessageBoxImage.Warning);
     }
 
@@ -562,7 +568,7 @@ public sealed class OverlayController : IDisposable
 
         if (failed.Count > 0)
         {
-            ShowError(owner, $"Не удалось зарегистрировать горячие клавиши:\n{string.Join(", ", failed)}");
+            ShowError(owner, string.Format(Strings.ControllerRegisterHotkeysFailed, string.Join(", ", failed)));
         }
     }
 

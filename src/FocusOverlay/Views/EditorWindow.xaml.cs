@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 using FocusOverlay.Services;
 using Microsoft.Win32;
 
@@ -149,8 +150,8 @@ public partial class EditorWindow : Window
 
     private void OnNewPresetClick(object sender, RoutedEventArgs e)
     {
-        var preset = new Preset { Name = "Новый пресет" };
-        preset.Pages.Add(new OverlayPage { Title = "Вкладка 1" });
+        var preset = new Preset { Name = Strings.ModelNewPreset };
+        preset.Pages.Add(new OverlayPage { Title = string.Format(Strings.ModelPageNumbered, 1) });
         _controller.State.Presets.Add(preset);
         _controller.SelectPreset(_controller.State.Presets.Count - 1);
     }
@@ -160,12 +161,12 @@ public partial class EditorWindow : Window
         var presets = _controller.State.Presets;
         if (presets.Count <= 1)
         {
-            MessageBox.Show(this, "Нельзя удалить единственный пресет.", Title, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, Strings.EditorCannotDeleteLastPreset, Title, MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
         var preset = ActivePreset;
-        if (!Confirm($"Удалить пресет «{preset.Name}» вместе с его изображениями?"))
+        if (!Confirm(string.Format(Strings.EditorDeletePresetConfirm, preset.Name)))
         {
             return;
         }
@@ -197,7 +198,7 @@ public partial class EditorWindow : Window
     private void OnAddPageClick(object sender, RoutedEventArgs e)
     {
         var pages = ActivePreset.Pages;
-        pages.Add(new OverlayPage { Title = $"Вкладка {pages.Count + 1}" });
+        pages.Add(new OverlayPage { Title = string.Format(Strings.ModelPageNumbered, pages.Count + 1) });
         _controller.SelectPage(pages.Count - 1);
     }
 
@@ -205,7 +206,7 @@ public partial class EditorWindow : Window
     {
         var pages = ActivePreset.Pages;
         var index = PageList.SelectedIndex;
-        if (index < 0 || !Confirm($"Удалить вкладку «{pages[index].Title}»?"))
+        if (index < 0 || !Confirm(string.Format(Strings.EditorDeletePageConfirm, pages[index].Title)))
         {
             return;
         }
@@ -240,8 +241,8 @@ public partial class EditorWindow : Window
     {
         var dialog = new OpenFileDialog
         {
-            Title = "Добавить изображение",
-            Filter = "Изображения|*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.webp;*.tif;*.tiff;*.ico|Все файлы (*.*)|*.*",
+            Title = Strings.EditorAddImageTitle,
+            Filter = Strings.EditorImageFilter,
             Multiselect = true,
         };
 
@@ -322,7 +323,7 @@ public partial class EditorWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, $"Не удалось добавить изображение:\n{ex.Message}", Title, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, string.Format(Strings.EditorAddImageFailed, ex.Message), Title, MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -342,7 +343,7 @@ public partial class EditorWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, $"Не удалось вставить изображение:\n{ex.Message}", Title, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, string.Format(Strings.EditorPasteImageFailed, ex.Message), Title, MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

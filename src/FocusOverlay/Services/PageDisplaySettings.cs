@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Media;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 using Markdig;
 using Markdig.Syntax;
 
@@ -48,7 +49,7 @@ public static class PageDisplaySettings
 
         var extra = Markdown.Parse(markdown, _pipeline)
             .Where(block => !(block is FencedCodeBlock fenced && IsSettingsBlock(fenced)))
-            .Select(block => new MarkdownIssue(block.Line, $"в system.md учитываются только блоки ```{Language}, остальное игнорируется"));
+            .Select(block => new MarkdownIssue(block.Line, string.Format(Strings.DiagSystemOnlyBlocks, Language)));
 
         return extra.Concat(Validate(markdown)).OrderBy(issue => issue.Line).ToList();
     }
@@ -79,7 +80,7 @@ public static class PageDisplaySettings
         var separator = text.IndexOfAny([':', '=']);
         if (separator <= 0)
         {
-            return $"строка «{text}» не в формате «параметр: значение»";
+            return string.Format(Strings.DiagNotKeyValue, text);
         }
 
         var name = text[..separator].Trim();
@@ -91,7 +92,7 @@ public static class PageDisplaySettings
             case "position":
                 if (!TryParseCorner(value, out var corner))
                 {
-                    return Invalid(name, value, "top-left, top-center, top-right, bottom-left, bottom-center или bottom-right");
+                    return Invalid(name, value, Strings.DiagExpectedCorner);
                 }
 
                 target.Corner = corner;
@@ -100,7 +101,7 @@ public static class PageDisplaySettings
             case "x":
                 if (!TryParseNumber(value, out var offsetX))
                 {
-                    return Invalid(name, value, "число пикселей");
+                    return Invalid(name, value, Strings.DiagExpectedPixels);
                 }
 
                 target.OffsetX = offsetX;
@@ -109,7 +110,7 @@ public static class PageDisplaySettings
             case "y":
                 if (!TryParseNumber(value, out var offsetY))
                 {
-                    return Invalid(name, value, "число пикселей");
+                    return Invalid(name, value, Strings.DiagExpectedPixels);
                 }
 
                 target.OffsetY = offsetY;
@@ -117,7 +118,7 @@ public static class PageDisplaySettings
             case "width":
                 if (!TryParseNumber(value, out var width))
                 {
-                    return Invalid(name, value, "число пикселей");
+                    return Invalid(name, value, Strings.DiagExpectedPixels);
                 }
 
                 target.Width = width;
@@ -125,7 +126,7 @@ public static class PageDisplaySettings
             case "height":
                 if (!TryParseNumber(value, out var height))
                 {
-                    return Invalid(name, value, "число пикселей");
+                    return Invalid(name, value, Strings.DiagExpectedPixels);
                 }
 
                 target.Height = height;
@@ -134,7 +135,7 @@ public static class PageDisplaySettings
             case "zoom":
                 if (!TryParseNumber(value, out var scale) || scale <= 0)
                 {
-                    return Invalid(name, value, "число больше 0, например 1.2");
+                    return Invalid(name, value, Strings.DiagExpectedPositive);
                 }
 
                 target.Scale = scale;
@@ -143,7 +144,7 @@ public static class PageDisplaySettings
             case "font":
                 if (!TryParseNumber(value, out var fontSize))
                 {
-                    return Invalid(name, value, "число от 6 до 48");
+                    return Invalid(name, value, Strings.DiagExpectedFontSize);
                 }
 
                 target.FontSize = fontSize;
@@ -153,7 +154,7 @@ public static class PageDisplaySettings
             case "backgroundopacity":
                 if (!TryParseOpacity(value, out var opacity))
                 {
-                    return Invalid(name, value, "0.5 или 50%");
+                    return Invalid(name, value, Strings.DiagExpectedOpacity);
                 }
 
                 target.BackgroundOpacity = opacity;
@@ -163,7 +164,7 @@ public static class PageDisplaySettings
             case "text":
                 if (!IsColor(value))
                 {
-                    return Invalid(name, value, "цвет: #RRGGBB, #AARRGGBB или имя");
+                    return Invalid(name, value, Strings.DiagExpectedColor);
                 }
 
                 target.TextColor = value;
@@ -172,18 +173,18 @@ public static class PageDisplaySettings
             case "accent":
                 if (!IsColor(value))
                 {
-                    return Invalid(name, value, "цвет: #RRGGBB, #AARRGGBB или имя");
+                    return Invalid(name, value, Strings.DiagExpectedColor);
                 }
 
                 target.AccentColor = value;
                 return null;
             default:
-                return $"неизвестный параметр «{name}»";
+                return string.Format(Strings.DiagUnknownParameter, name);
         }
     }
 
     private static string Invalid(string name, string value, string expected) =>
-        $"неверное значение «{value}» у «{name}», ожидается {expected}";
+        string.Format(Strings.DiagInvalidValue, value, name, expected);
 
     private static string NormalizeKey(string key) =>
         new(key.Trim().ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());

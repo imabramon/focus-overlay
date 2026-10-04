@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using FocusOverlay.Properties;
 
 namespace FocusOverlay.Models;
 
@@ -60,19 +61,11 @@ public sealed class AppState
 
     private static Preset CreateSamplePreset()
     {
-        var preset = new Preset { Name = "Шаблон" };
+        var preset = new Preset { Name = Strings.ModelSamplePreset };
         preset.Pages.Add(new OverlayPage
         {
             Title = "README",
-            Content = """
-                # Focus Overlay
-
-                - Двойной клик по иконке в трее — **редактор**
-                - Правый клик — меню и **настройки**
-                - `Ctrl+Alt+O` — показать / скрыть
-                - `Ctrl+Alt+←` / `→` — вкладки
-                - `Ctrl+Alt+P` — следующий пресет
-                """,
+            Content = Strings.ModelSampleContent,
         });
         return preset;
     }

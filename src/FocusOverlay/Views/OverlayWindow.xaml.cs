@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 using FocusOverlay.Services;
 
 namespace FocusOverlay.Views;
@@ -47,7 +48,7 @@ public partial class OverlayWindow : ClickThroughWindow
         var offset = samePage ? GetScroll()?.VerticalOffset ?? 0 : 0;
         _renderedPage = page;
 
-        var markdown = page?.Content ?? "*Нет вкладок — добавьте их в редакторе (двойной клик по иконке в трее).*";
+        var markdown = page?.Content ?? Strings.OverlayNoPages;
         DocumentViewer.Document = MarkdownRenderer.Render(markdown, theme);
         Dispatcher.InvokeAsync(() => GetScroll()?.ScrollToVerticalOffset(offset), DispatcherPriority.Loaded);
 

@@ -41,7 +41,7 @@ public static class MarkdownRenderer
 
     private static readonly Regex _optionsLinePattern = new(@"^\s*\{(?<body>[^{}]*)\}\s*$", RegexOptions.Compiled);
     private static readonly Regex _optionPattern = new(@"(?<key>[A-Za-z][\w-]*)\s*=\s*(?:""(?<value>[^""]*)""|'(?<value>[^']*)'|(?<value>[^\s""']+))", RegexOptions.Compiled);
-    private static readonly Regex _imageSizePattern = new(@"^(?<alt>.*?)\s*\|\s*(?<width>\d+(?:[.,]\d+)?)?\s*(?:[xх×]\s*(?<height>\d+(?:[.,]\d+)?))?\s*$", RegexOptions.Compiled);
+    private static readonly Regex _imageSizePattern = new(@"^(?<alt>.*?)\s*\|\s*(?<width>\d+(?:[.,]\d+)?)?\s*(?:x\s*(?<height>\d+(?:[.,]\d+)?))?\s*$", RegexOptions.Compiled);
 
     public static MarkdownPipeline Pipeline => _pipeline;
 

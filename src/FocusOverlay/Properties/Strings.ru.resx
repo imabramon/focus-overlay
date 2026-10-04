@@ -1,0 +1,511 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppAlreadyRunning" xml:space="preserve">
+    <value>Focus Overlay уже запущен — ищите иконку в трее.</value>
+  </data>
+  <data name="AppErrorTitle" xml:space="preserve">
+    <value>Focus Overlay — ошибка</value>
+  </data>
+  <data name="WindowTitleTabStrip" xml:space="preserve">
+    <value>Focus Overlay — вкладки</value>
+  </data>
+  <data name="WindowTitleSettings" xml:space="preserve">
+    <value>Focus Overlay — настройки</value>
+  </data>
+  <data name="WindowTitleEditor" xml:space="preserve">
+    <value>Focus Overlay — редактор</value>
+  </data>
+  <data name="CommonImport" xml:space="preserve">
+    <value>Импорт…</value>
+  </data>
+  <data name="CommonExport" xml:space="preserve">
+    <value>Экспорт…</value>
+  </data>
+  <data name="CommonCancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="CommonSettings" xml:space="preserve">
+    <value>Настройки…</value>
+  </data>
+  <data name="CommonImportAll" xml:space="preserve">
+    <value>Импорт всего…</value>
+  </data>
+  <data name="CommonToggle" xml:space="preserve">
+    <value>Показать / скрыть</value>
+  </data>
+  <data name="CommonResetUserView" xml:space="preserve">
+    <value>Сбросить положение и масштаб</value>
+  </data>
+  <data name="CommonPreset" xml:space="preserve">
+    <value>Пресет</value>
+  </data>
+  <data name="CommonUntitled" xml:space="preserve">
+    <value>Без названия</value>
+  </data>
+  <data name="CornerTopLeft" xml:space="preserve">
+    <value>Левый верхний</value>
+  </data>
+  <data name="CornerTopCenter" xml:space="preserve">
+    <value>Сверху по центру</value>
+  </data>
+  <data name="CornerTopRight" xml:space="preserve">
+    <value>Правый верхний</value>
+  </data>
+  <data name="CornerBottomLeft" xml:space="preserve">
+    <value>Левый нижний</value>
+  </data>
+  <data name="CornerBottomCenter" xml:space="preserve">
+    <value>Снизу по центру</value>
+  </data>
+  <data name="CornerBottomRight" xml:space="preserve">
+    <value>Правый нижний</value>
+  </data>
+  <data name="HotkeyNextPage" xml:space="preserve">
+    <value>Следующая вкладка</value>
+  </data>
+  <data name="HotkeyPrevPage" xml:space="preserve">
+    <value>Предыдущая вкладка</value>
+  </data>
+  <data name="HotkeyZoomIn" xml:space="preserve">
+    <value>Масштаб +</value>
+  </data>
+  <data name="HotkeyZoomOut" xml:space="preserve">
+    <value>Масштаб −</value>
+  </data>
+  <data name="HotkeyScrollUp" xml:space="preserve">
+    <value>Прокрутка вверх</value>
+  </data>
+  <data name="HotkeyScrollDown" xml:space="preserve">
+    <value>Прокрутка вниз</value>
+  </data>
+  <data name="HotkeyNextPreset" xml:space="preserve">
+    <value>Следующий пресет</value>
+  </data>
+  <data name="HotkeyPrevPreset" xml:space="preserve">
+    <value>Предыдущий пресет</value>
+  </data>
+  <data name="HotkeyMoveTop" xml:space="preserve">
+    <value>Оверлей вверх</value>
+  </data>
+  <data name="HotkeyMoveBottom" xml:space="preserve">
+    <value>Оверлей вниз</value>
+  </data>
+  <data name="HotkeyMoveLeft" xml:space="preserve">
+    <value>Оверлей влево</value>
+  </data>
+  <data name="HotkeyMoveCenter" xml:space="preserve">
+    <value>Оверлей по центру</value>
+  </data>
+  <data name="HotkeyMoveRight" xml:space="preserve">
+    <value>Оверлей вправо</value>
+  </data>
+  <data name="HotkeyRegisterFailedInline" xml:space="preserve">
+    <value>Не удалось зарегистрировать (заняты другой программой?): {0}</value>
+  </data>
+  <data name="SettingsResetConfirm" xml:space="preserve">
+    <value>Сбросить положение, вид и горячие клавиши к значениям по умолчанию?</value>
+  </data>
+  <data name="SettingsImportTooltip" xml:space="preserve">
+    <value>Загрузить только настройки (.json)</value>
+  </data>
+  <data name="SettingsExportTooltip" xml:space="preserve">
+    <value>Сохранить только настройки (.json)</value>
+  </data>
+  <data name="SettingsReset" xml:space="preserve">
+    <value>Сбросить</value>
+  </data>
+  <data name="SettingsBackupGroup" xml:space="preserve">
+    <value>Настройки + все пресеты</value>
+  </data>
+  <data name="SettingsExportAll" xml:space="preserve">
+    <value>Экспорт всего…</value>
+  </data>
+  <data name="SettingsTabOverlay" xml:space="preserve">
+    <value>Оверлей</value>
+  </data>
+  <data name="SettingsScreenCorner" xml:space="preserve">
+    <value>Угол экрана</value>
+  </data>
+  <data name="SettingsOffsetX" xml:space="preserve">
+    <value>Отступ по X</value>
+  </data>
+  <data name="SettingsOffsetY" xml:space="preserve">
+    <value>Отступ по Y</value>
+  </data>
+  <data name="SettingsWidth" xml:space="preserve">
+    <value>Ширина</value>
+  </data>
+  <data name="SettingsHeight" xml:space="preserve">
+    <value>Высота</value>
+  </data>
+  <data name="SettingsZoom" xml:space="preserve">
+    <value>Масштаб</value>
+  </data>
+  <data name="SettingsFontSize" xml:space="preserve">
+    <value>Размер шрифта</value>
+  </data>
+  <data name="SettingsBackgroundOpacity" xml:space="preserve">
+    <value>Прозрачность фона</value>
+  </data>
+  <data name="SettingsTextColor" xml:space="preserve">
+    <value>Цвет текста</value>
+  </data>
+  <data name="SettingsAccentColor" xml:space="preserve">
+    <value>Цвет акцента</value>
+  </data>
+  <data name="SettingsTabTabStrip" xml:space="preserve">
+    <value>Полоса вкладок</value>
+  </data>
+  <data name="SettingsTabStripVisible" xml:space="preserve">
+    <value>Показывать полосу вкладок</value>
+  </data>
+  <data name="SettingsTabStripDetached" xml:space="preserve">
+    <value>Отдельное положение (не прикреплять к оверлею)</value>
+  </data>
+  <data name="SettingsTabStripAttachedHint" xml:space="preserve">
+    <value>Без галочки полоса стоит в углу оверлея, совпадает с ним по ширине, а содержимое вкладки встаёт рядом с ней.</value>
+  </data>
+  <data name="SettingsPosition" xml:space="preserve">
+    <value>Положение</value>
+  </data>
+  <data name="SettingsAppearance" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="SettingsTabStripZoom" xml:space="preserve">
+    <value>Масштаб (×)</value>
+  </data>
+  <data name="SettingsTabStripZoomTooltip" xml:space="preserve">
+    <value>Множитель к общему масштабу оверлея: горячие клавиши масштаба меняют и полосу</value>
+  </data>
+  <data name="SettingsActiveTabColor" xml:space="preserve">
+    <value>Цвет активной вкладки</value>
+  </data>
+  <data name="SettingsTabHotkeys" xml:space="preserve">
+    <value>Горячие клавиши</value>
+  </data>
+  <data name="SettingsHotkeysHint" xml:space="preserve">
+    <value>Кликните в поле и нажмите сочетание. Backspace — очистить, Esc — отмена.</value>
+  </data>
+  <data name="ColorPickerTooltip" xml:space="preserve">
+    <value>Выбрать цвет</value>
+  </data>
+  <data name="ColorPickerPreviewHeading" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="ColorPickerPreviewText" xml:space="preserve">
+    <value>Пример текста на оверлее</value>
+  </data>
+  <data name="ColorPickerBefore" xml:space="preserve">
+    <value>Было</value>
+  </data>
+  <data name="ColorPickerAfter" xml:space="preserve">
+    <value>Стало</value>
+  </data>
+  <data name="OverlayNoPages" xml:space="preserve">
+    <value>*Нет вкладок — добавьте их в редакторе (двойной клик по иконке в трее).*</value>
+  </data>
+  <data name="EditorNew" xml:space="preserve">
+    <value>Новый</value>
+  </data>
+  <data name="EditorDelete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="EditorImportFolder" xml:space="preserve">
+    <value>Импорт папки…</value>
+  </data>
+  <data name="EditorPresetLabel" xml:space="preserve">
+    <value>Пресет:</value>
+  </data>
+  <data name="EditorNameLabel" xml:space="preserve">
+    <value>Название:</value>
+  </data>
+  <data name="EditorSystemTab" xml:space="preserve">
+    <value>⚙ system.md — настройки пресета</value>
+  </data>
+  <data name="EditorSystemTabTooltip" xml:space="preserve">
+    <value>Блок ```focus-overlay для всего пресета. Вкладка не показывается на оверлее.</value>
+  </data>
+  <data name="EditorAddPage" xml:space="preserve">
+    <value>Добавить вкладку</value>
+  </data>
+  <data name="EditorRemovePage" xml:space="preserve">
+    <value>Удалить вкладку</value>
+  </data>
+  <data name="EditorMoveUp" xml:space="preserve">
+    <value>Выше</value>
+  </data>
+  <data name="EditorMoveDown" xml:space="preserve">
+    <value>Ниже</value>
+  </data>
+  <data name="EditorMarkdownHint" xml:space="preserve">
+    <value>Markdown: **жирный**, *курсив*, ==выделение==, - [ ] задачи, таблицы. Картинка с размером: ![имя|32](файл.png) — без пробелов в пути (пробел → %20) — или ![[файл с пробелами.png]] (без размера), Ctrl+V вставляет из буфера. Параметры таблицы: {widths="120,1*" borders=rows} через пустую строку над ней. Вид вкладки: блок ```focus-overlay. Полное описание: docs/markup.md в репозитории.</value>
+  </data>
+  <data name="EditorIssuesTooltip" xml:space="preserve">
+    <value>Двойной клик — перейти к строке</value>
+  </data>
+  <data name="EditorInsertImage" xml:space="preserve">
+    <value>Изображение…</value>
+  </data>
+  <data name="EditorTitleLabel" xml:space="preserve">
+    <value>Заголовок:</value>
+  </data>
+  <data name="EditorSystemHint" xml:space="preserve">
+    <value>system.md — вид оверлея для всего пресета. Учитываются только блоки ```focus-overlay с теми же параметрами, что и во вкладках. Порядок: настройки приложения → system.md → блок вкладки → изменения с клавиш.</value>
+  </data>
+  <data name="EditorCannotDeleteLastPreset" xml:space="preserve">
+    <value>Нельзя удалить единственный пресет.</value>
+  </data>
+  <data name="EditorDeletePresetConfirm" xml:space="preserve">
+    <value>Удалить пресет «{0}» вместе с его изображениями?</value>
+  </data>
+  <data name="EditorDeletePageConfirm" xml:space="preserve">
+    <value>Удалить вкладку «{0}»?</value>
+  </data>
+  <data name="EditorAddImageTitle" xml:space="preserve">
+    <value>Добавить изображение</value>
+  </data>
+  <data name="EditorImageFilter" xml:space="preserve">
+    <value>Изображения|*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.webp;*.tif;*.tiff;*.ico|Все файлы (*.*)|*.*</value>
+  </data>
+  <data name="EditorAddImageFailed" xml:space="preserve">
+    <value>Не удалось добавить изображение:
+{0}</value>
+  </data>
+  <data name="EditorPasteImageFailed" xml:space="preserve">
+    <value>Не удалось вставить изображение:
+{0}</value>
+  </data>
+  <data name="TrayEditor" xml:space="preserve">
+    <value>Редактор…</value>
+  </data>
+  <data name="TrayImportPreset" xml:space="preserve">
+    <value>Импорт пресета…</value>
+  </data>
+  <data name="TrayImportFolder" xml:space="preserve">
+    <value>Импорт папки с .md…</value>
+  </data>
+  <data name="TrayExportPreset" xml:space="preserve">
+    <value>Экспорт текущего пресета…</value>
+  </data>
+  <data name="TrayExportAll" xml:space="preserve">
+    <value>Экспорт всего (настройки + пресеты)…</value>
+  </data>
+  <data name="TrayOpenDataFolder" xml:space="preserve">
+    <value>Открыть папку данных</value>
+  </data>
+  <data name="TrayExit" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="ControllerHotkeysBusy" xml:space="preserve">
+    <value>Горячие клавиши заняты</value>
+  </data>
+  <data name="ControllerImportSettingsTitle" xml:space="preserve">
+    <value>Импорт настроек</value>
+  </data>
+  <data name="ControllerImportSettingsFailed" xml:space="preserve">
+    <value>Не удалось импортировать настройки:
+{0}</value>
+  </data>
+  <data name="ControllerExportSettingsTitle" xml:space="preserve">
+    <value>Экспорт настроек</value>
+  </data>
+  <data name="ControllerExportSettingsFailed" xml:space="preserve">
+    <value>Не удалось экспортировать настройки:
+{0}</value>
+  </data>
+  <data name="ControllerExportBackupTitle" xml:space="preserve">
+    <value>Экспорт настроек и всех пресетов</value>
+  </data>
+  <data name="ControllerExportBackupFailed" xml:space="preserve">
+    <value>Не удалось сохранить резервную копию:
+{0}</value>
+  </data>
+  <data name="ControllerImportBackupTitle" xml:space="preserve">
+    <value>Импорт настроек и всех пресетов</value>
+  </data>
+  <data name="ControllerImportBackupQuestion" xml:space="preserve">
+    <value>Заменить текущие пресеты пресетами из копии?
+
+Да — заменить (текущие пресеты и их картинки будут удалены)
+Нет — добавить к текущим
+
+Настройки и горячие клавиши будут заменены в любом случае.</value>
+  </data>
+  <data name="ControllerImportBackupFailed" xml:space="preserve">
+    <value>Не удалось загрузить резервную копию:
+{0}</value>
+  </data>
+  <data name="ControllerImportPresetTitle" xml:space="preserve">
+    <value>Импорт пресета</value>
+  </data>
+  <data name="ControllerImportFolderTitle" xml:space="preserve">
+    <value>Папка с .md файлами</value>
+  </data>
+  <data name="ControllerExportPresetTitle" xml:space="preserve">
+    <value>Экспорт пресета</value>
+  </data>
+  <data name="ControllerExportPresetFailed" xml:space="preserve">
+    <value>Не удалось экспортировать пресет:
+{0}</value>
+  </data>
+  <data name="ControllerSaveError" xml:space="preserve">
+    <value>Ошибка сохранения</value>
+  </data>
+  <data name="ControllerImportPresetFailed" xml:space="preserve">
+    <value>Не удалось импортировать пресет:
+{0}</value>
+  </data>
+  <data name="ControllerIssueInPage" xml:space="preserve">
+    <value>«{0}» — {1}</value>
+  </data>
+  <data name="ControllerIssuesMore" xml:space="preserve">
+    <value>
+… и ещё {0}</value>
+  </data>
+  <data name="ControllerImportIssues" xml:space="preserve">
+    <value>Пресет «{0}» импортирован, но в нём есть ошибки:
+
+{1}
+
+Они также показываются в редакторе под текстом вкладки.</value>
+  </data>
+  <data name="ControllerRegisterHotkeysFailed" xml:space="preserve">
+    <value>Не удалось зарегистрировать горячие клавиши:
+{0}</value>
+  </data>
+  <data name="ArchiveCannotReadManifest" xml:space="preserve">
+    <value>Не удалось прочитать manifest.json</value>
+  </data>
+  <data name="BackupDialogFilter" xml:space="preserve">
+    <value>Резервная копия Focus Overlay (*.foverlay-backup;*.zip)|*.foverlay-backup;*.zip|Все файлы (*.*)|*.*</value>
+  </data>
+  <data name="BackupNotBackup" xml:space="preserve">
+    <value>Файл не является резервной копией Focus Overlay</value>
+  </data>
+  <data name="BackupNewerVersion" xml:space="preserve">
+    <value>Копия создана более новой версией (формат v{0})</value>
+  </data>
+  <data name="BackupNoSettings" xml:space="preserve">
+    <value>В копии нет settings.json</value>
+  </data>
+  <data name="SettingsDialogFilter" xml:space="preserve">
+    <value>Настройки Focus Overlay (*.json)|*.json|Все файлы (*.*)|*.*</value>
+  </data>
+  <data name="SettingsFileEmpty" xml:space="preserve">
+    <value>Файл пуст</value>
+  </data>
+  <data name="SettingsNotSettings" xml:space="preserve">
+    <value>Файл не является настройками Focus Overlay</value>
+  </data>
+  <data name="SettingsNewerVersion" xml:space="preserve">
+    <value>Настройки созданы более новой версией (формат v{0})</value>
+  </data>
+  <data name="PresetDialogFilter" xml:space="preserve">
+    <value>Пресет оверлея (*.foverlay;*.zip)|*.foverlay;*.zip|Все файлы (*.*)|*.*</value>
+  </data>
+  <data name="PresetArchiveEmpty" xml:space="preserve">
+    <value>В архиве нет manifest.json и .md файлов</value>
+  </data>
+  <data name="PresetArchiveMissingEntry" xml:space="preserve">
+    <value>В архиве нет {0}</value>
+  </data>
+  <data name="PresetNotPreset" xml:space="preserve">
+    <value>Архив не является пресетом Focus Overlay</value>
+  </data>
+  <data name="PresetNewerVersion" xml:space="preserve">
+    <value>Пресет создан более новой версией (формат v{0})</value>
+  </data>
+  <data name="PresetFolderNoMarkdown" xml:space="preserve">
+    <value>В папке нет .md файлов</value>
+  </data>
+  <data name="ModelNewPage" xml:space="preserve">
+    <value>Новая вкладка</value>
+  </data>
+  <data name="ModelNewPreset" xml:space="preserve">
+    <value>Новый пресет</value>
+  </data>
+  <data name="ModelPageNumbered" xml:space="preserve">
+    <value>Вкладка {0}</value>
+  </data>
+  <data name="ModelSamplePreset" xml:space="preserve">
+    <value>Шаблон</value>
+  </data>
+  <data name="ModelSampleContent" xml:space="preserve">
+    <value># Focus Overlay
+
+- Двойной клик по иконке в трее — **редактор**
+- Правый клик — меню и **настройки**
+- `Ctrl+Alt+O` — показать / скрыть
+- `Ctrl+Alt+←` / `→` — вкладки
+- `Ctrl+Alt+P` — следующий пресет</value>
+  </data>
+  <data name="DiagLine" xml:space="preserve">
+    <value>Строка {0}: {1}</value>
+  </data>
+  <data name="DiagImageNoFile" xml:space="preserve">
+    <value>у изображения не указан файл</value>
+  </data>
+  <data name="DiagImageNotFound" xml:space="preserve">
+    <value>изображение не найдено: {0}</value>
+  </data>
+  <data name="DiagNotImage" xml:space="preserve">
+    <value>файл не является изображением: {0}</value>
+  </data>
+  <data name="DiagImagePathSpace" xml:space="preserve">
+    <value>пробел в пути к изображению «{0}»: замените пробелы на %20 или используйте ![[{0}]]</value>
+  </data>
+  <data name="DiagSystemOnlyBlocks" xml:space="preserve">
+    <value>в system.md учитываются только блоки ```{0}, остальное игнорируется</value>
+  </data>
+  <data name="DiagNotKeyValue" xml:space="preserve">
+    <value>строка «{0}» не в формате «параметр: значение»</value>
+  </data>
+  <data name="DiagUnknownParameter" xml:space="preserve">
+    <value>неизвестный параметр «{0}»</value>
+  </data>
+  <data name="DiagInvalidValue" xml:space="preserve">
+    <value>неверное значение «{0}» у «{1}», ожидается {2}</value>
+  </data>
+  <data name="DiagExpectedCorner" xml:space="preserve">
+    <value>top-left, top-center, top-right, bottom-left, bottom-center или bottom-right</value>
+  </data>
+  <data name="DiagExpectedPixels" xml:space="preserve">
+    <value>число пикселей</value>
+  </data>
+  <data name="DiagExpectedPositive" xml:space="preserve">
+    <value>число больше 0, например 1.2</value>
+  </data>
+  <data name="DiagExpectedFontSize" xml:space="preserve">
+    <value>число от 6 до 48</value>
+  </data>
+  <data name="DiagExpectedOpacity" xml:space="preserve">
+    <value>0.5 или 50%</value>
+  </data>
+  <data name="DiagExpectedColor" xml:space="preserve">
+    <value>цвет: #RRGGBB, #AARRGGBB или имя</value>
+  </data>
+  <data name="SettingsLanguage" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="SettingsLanguageSystem" xml:space="preserve">
+    <value>Как в системе</value>
+  </data>
+  <data name="SettingsLanguageRestart" xml:space="preserve">
+    <value>Язык изменится после перезапуска. Перезапустить сейчас?</value>
+  </data>
+</root>

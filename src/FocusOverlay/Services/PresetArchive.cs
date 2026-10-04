@@ -6,13 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 
 namespace FocusOverlay.Services;
 
 public static class PresetArchive
 {
     public const string FileExtension = ".foverlay";
-    public const string DialogFilter = "Пресет оверлея (*.foverlay;*.zip)|*.foverlay;*.zip|Все файлы (*.*)|*.*";
+    public static string DialogFilter => Strings.PresetDialogFilter;
 
     private const string FormatId = "focus-overlay-preset";
     private const int FormatVersion = 1;
@@ -66,7 +67,7 @@ public static class PresetArchive
 
         if (preset.Pages.Count == 0)
         {
-            throw new InvalidDataException("В архиве нет manifest.json и .md файлов");
+            throw new InvalidDataException(Strings.PresetArchiveEmpty);
         }
 
         ExtractAssets(archive, preset, string.Empty);
@@ -106,21 +107,21 @@ public static class PresetArchive
     public static Preset ReadFrom(ZipArchive archive, string prefix)
     {
         var manifestEntry = archive.GetEntry(prefix + ManifestName)
-            ?? throw new InvalidDataException($"В архиве нет {prefix}{ManifestName}");
+            ?? throw new InvalidDataException(string.Format(Strings.PresetArchiveMissingEntry, prefix + ManifestName));
         var manifest = JsonSerializer.Deserialize<PresetManifest>(ReadText(manifestEntry), _options)
-            ?? throw new InvalidDataException("Не удалось прочитать manifest.json");
+            ?? throw new InvalidDataException(Strings.ArchiveCannotReadManifest);
 
         if (manifest.Format != FormatId)
         {
-            throw new InvalidDataException("Архив не является пресетом Focus Overlay");
+            throw new InvalidDataException(Strings.PresetNotPreset);
         }
 
         if (manifest.Version > FormatVersion)
         {
-            throw new InvalidDataException($"Пресет создан более новой версией (формат v{manifest.Version})");
+            throw new InvalidDataException(string.Format(Strings.PresetNewerVersion, manifest.Version));
         }
 
-        var preset = new Preset { Name = string.IsNullOrWhiteSpace(manifest.Name) ? "Пресет" : manifest.Name };
+        var preset = new Preset { Name = string.IsNullOrWhiteSpace(manifest.Name) ? Strings.CommonPreset : manifest.Name };
         if (!string.IsNullOrWhiteSpace(manifest.System) && archive.GetEntry(prefix + manifest.System) is { } systemEntry)
         {
             preset.SystemContent = ReadText(systemEntry);
@@ -130,7 +131,7 @@ public static class PresetArchive
             var entry = archive.GetEntry(prefix + page.File);
             preset.Pages.Add(new OverlayPage
             {
-                Title = string.IsNullOrWhiteSpace(page.Title) ? "Без названия" : page.Title,
+                Title = string.IsNullOrWhiteSpace(page.Title) ? Strings.CommonUntitled : page.Title,
                 Content = entry != null ? ReadText(entry) : string.Empty,
             });
         }

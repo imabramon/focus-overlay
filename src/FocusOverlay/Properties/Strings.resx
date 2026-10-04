@@ -1,0 +1,517 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppAlreadyRunning" xml:space="preserve">
+    <value>Focus Overlay is already running — look for its tray icon.</value>
+  </data>
+  <data name="AppErrorTitle" xml:space="preserve">
+    <value>Focus Overlay — error</value>
+  </data>
+  <data name="WindowTitleTabStrip" xml:space="preserve">
+    <value>Focus Overlay — tabs</value>
+  </data>
+  <data name="WindowTitleSettings" xml:space="preserve">
+    <value>Focus Overlay — settings</value>
+  </data>
+  <data name="WindowTitleEditor" xml:space="preserve">
+    <value>Focus Overlay — editor</value>
+  </data>
+  <data name="CommonImport" xml:space="preserve">
+    <value>Import…</value>
+  </data>
+  <data name="CommonExport" xml:space="preserve">
+    <value>Export…</value>
+  </data>
+  <data name="CommonCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CommonSettings" xml:space="preserve">
+    <value>Settings…</value>
+  </data>
+  <data name="CommonImportAll" xml:space="preserve">
+    <value>Import all…</value>
+  </data>
+  <data name="CommonToggle" xml:space="preserve">
+    <value>Show / hide</value>
+  </data>
+  <data name="CommonResetUserView" xml:space="preserve">
+    <value>Reset position and zoom</value>
+  </data>
+  <data name="CommonPreset" xml:space="preserve">
+    <value>Preset</value>
+  </data>
+  <data name="CommonUntitled" xml:space="preserve">
+    <value>Untitled</value>
+  </data>
+  <data name="CornerTopLeft" xml:space="preserve">
+    <value>Top left</value>
+  </data>
+  <data name="CornerTopCenter" xml:space="preserve">
+    <value>Top center</value>
+  </data>
+  <data name="CornerTopRight" xml:space="preserve">
+    <value>Top right</value>
+  </data>
+  <data name="CornerBottomLeft" xml:space="preserve">
+    <value>Bottom left</value>
+  </data>
+  <data name="CornerBottomCenter" xml:space="preserve">
+    <value>Bottom center</value>
+  </data>
+  <data name="CornerBottomRight" xml:space="preserve">
+    <value>Bottom right</value>
+  </data>
+  <data name="HotkeyNextPage" xml:space="preserve">
+    <value>Next tab</value>
+  </data>
+  <data name="HotkeyPrevPage" xml:space="preserve">
+    <value>Previous tab</value>
+  </data>
+  <data name="HotkeyZoomIn" xml:space="preserve">
+    <value>Zoom in</value>
+  </data>
+  <data name="HotkeyZoomOut" xml:space="preserve">
+    <value>Zoom out</value>
+  </data>
+  <data name="HotkeyScrollUp" xml:space="preserve">
+    <value>Scroll up</value>
+  </data>
+  <data name="HotkeyScrollDown" xml:space="preserve">
+    <value>Scroll down</value>
+  </data>
+  <data name="HotkeyNextPreset" xml:space="preserve">
+    <value>Next preset</value>
+  </data>
+  <data name="HotkeyPrevPreset" xml:space="preserve">
+    <value>Previous preset</value>
+  </data>
+  <data name="HotkeyMoveTop" xml:space="preserve">
+    <value>Move overlay up</value>
+  </data>
+  <data name="HotkeyMoveBottom" xml:space="preserve">
+    <value>Move overlay down</value>
+  </data>
+  <data name="HotkeyMoveLeft" xml:space="preserve">
+    <value>Move overlay left</value>
+  </data>
+  <data name="HotkeyMoveCenter" xml:space="preserve">
+    <value>Center overlay</value>
+  </data>
+  <data name="HotkeyMoveRight" xml:space="preserve">
+    <value>Move overlay right</value>
+  </data>
+  <data name="HotkeyRegisterFailedInline" xml:space="preserve">
+    <value>Failed to register (used by another program?): {0}</value>
+  </data>
+  <data name="SettingsResetConfirm" xml:space="preserve">
+    <value>Reset position, appearance and hotkeys to defaults?</value>
+  </data>
+  <data name="SettingsImportTooltip" xml:space="preserve">
+    <value>Load settings only (.json)</value>
+  </data>
+  <data name="SettingsExportTooltip" xml:space="preserve">
+    <value>Save settings only (.json)</value>
+  </data>
+  <data name="SettingsReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="SettingsBackupGroup" xml:space="preserve">
+    <value>Settings + all presets</value>
+  </data>
+  <data name="SettingsExportAll" xml:space="preserve">
+    <value>Export all…</value>
+  </data>
+  <data name="SettingsTabOverlay" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
+  <data name="SettingsScreenCorner" xml:space="preserve">
+    <value>Screen corner</value>
+  </data>
+  <data name="SettingsOffsetX" xml:space="preserve">
+    <value>X offset</value>
+  </data>
+  <data name="SettingsOffsetY" xml:space="preserve">
+    <value>Y offset</value>
+  </data>
+  <data name="SettingsWidth" xml:space="preserve">
+    <value>Width</value>
+  </data>
+  <data name="SettingsHeight" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="SettingsZoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="SettingsFontSize" xml:space="preserve">
+    <value>Font size</value>
+  </data>
+  <data name="SettingsBackgroundOpacity" xml:space="preserve">
+    <value>Background opacity</value>
+  </data>
+  <data name="SettingsTextColor" xml:space="preserve">
+    <value>Text color</value>
+  </data>
+  <data name="SettingsAccentColor" xml:space="preserve">
+    <value>Accent color</value>
+  </data>
+  <data name="SettingsTabTabStrip" xml:space="preserve">
+    <value>Tab strip</value>
+  </data>
+  <data name="SettingsTabStripVisible" xml:space="preserve">
+    <value>Show tab strip</value>
+  </data>
+  <data name="SettingsTabStripDetached" xml:space="preserve">
+    <value>Separate position (don't attach to the overlay)</value>
+  </data>
+  <data name="SettingsTabStripAttachedHint" xml:space="preserve">
+    <value>When unchecked, the strip sits in the overlay corner, matches its width, and the tab content is placed next to it.</value>
+  </data>
+  <data name="SettingsPosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="SettingsAppearance" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="SettingsTabStripZoom" xml:space="preserve">
+    <value>Zoom (×)</value>
+  </data>
+  <data name="SettingsTabStripZoomTooltip" xml:space="preserve">
+    <value>Multiplier of the overlay zoom: zoom hotkeys change the strip too</value>
+  </data>
+  <data name="SettingsActiveTabColor" xml:space="preserve">
+    <value>Active tab color</value>
+  </data>
+  <data name="SettingsTabHotkeys" xml:space="preserve">
+    <value>Hotkeys</value>
+  </data>
+  <data name="SettingsHotkeysHint" xml:space="preserve">
+    <value>Click a field and press a key combination. Backspace — clear, Esc — cancel.</value>
+  </data>
+  <data name="ColorPickerTooltip" xml:space="preserve">
+    <value>Pick a color</value>
+  </data>
+  <data name="ColorPickerPreviewHeading" xml:space="preserve">
+    <value>Heading</value>
+  </data>
+  <data name="ColorPickerPreviewText" xml:space="preserve">
+    <value>Sample overlay text</value>
+  </data>
+  <data name="ColorPickerBefore" xml:space="preserve">
+    <value>Before</value>
+  </data>
+  <data name="ColorPickerAfter" xml:space="preserve">
+    <value>After</value>
+  </data>
+  <data name="OverlayNoPages" xml:space="preserve">
+    <value>*No tabs — add them in the editor (double-click the tray icon).*</value>
+  </data>
+  <data name="EditorNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="EditorDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="EditorImportFolder" xml:space="preserve">
+    <value>Import folder…</value>
+  </data>
+  <data name="EditorPresetLabel" xml:space="preserve">
+    <value>Preset:</value>
+  </data>
+  <data name="EditorNameLabel" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="EditorSystemTab" xml:space="preserve">
+    <value>⚙ system.md — preset settings</value>
+  </data>
+  <data name="EditorSystemTabTooltip" xml:space="preserve">
+    <value>```focus-overlay block for the whole preset. This tab is not shown on the overlay.</value>
+  </data>
+  <data name="EditorAddPage" xml:space="preserve">
+    <value>Add tab</value>
+  </data>
+  <data name="EditorRemovePage" xml:space="preserve">
+    <value>Remove tab</value>
+  </data>
+  <data name="EditorMoveUp" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="EditorMoveDown" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="EditorMarkdownHint" xml:space="preserve">
+    <value>Markdown: **bold**, *italic*, ==highlight==, - [ ] tasks, tables. Sized image: ![name|32](file.png) — no spaces in the path (space → %20) — or ![[file with spaces.png]] (no size), Ctrl+V pastes from the clipboard. Table options: {widths="120,1*" borders=rows} with a blank line above the table. Tab appearance: a ```focus-overlay block. Full reference: docs/markup.md in the repository.</value>
+  </data>
+  <data name="EditorIssuesTooltip" xml:space="preserve">
+    <value>Double-click to go to the line</value>
+  </data>
+  <data name="EditorInsertImage" xml:space="preserve">
+    <value>Image…</value>
+  </data>
+  <data name="EditorTitleLabel" xml:space="preserve">
+    <value>Title:</value>
+  </data>
+  <data name="EditorSystemHint" xml:space="preserve">
+    <value>system.md — overlay appearance for the whole preset. Only ```focus-overlay blocks with the same parameters as in tabs are used. Order: app settings → system.md → tab block → hotkey changes.</value>
+  </data>
+  <data name="EditorCannotDeleteLastPreset" xml:space="preserve">
+    <value>You can't delete the only preset.</value>
+  </data>
+  <data name="EditorDeletePresetConfirm" xml:space="preserve">
+    <value>Delete preset “{0}” along with its images?</value>
+  </data>
+  <data name="EditorDeletePageConfirm" xml:space="preserve">
+    <value>Delete tab “{0}”?</value>
+  </data>
+  <data name="EditorAddImageTitle" xml:space="preserve">
+    <value>Add image</value>
+  </data>
+  <data name="EditorImageFilter" xml:space="preserve">
+    <value>Images|*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.webp;*.tif;*.tiff;*.ico|All files (*.*)|*.*</value>
+  </data>
+  <data name="EditorAddImageFailed" xml:space="preserve">
+    <value>Failed to add the image:
+{0}</value>
+  </data>
+  <data name="EditorPasteImageFailed" xml:space="preserve">
+    <value>Failed to paste the image:
+{0}</value>
+  </data>
+  <data name="TrayEditor" xml:space="preserve">
+    <value>Editor…</value>
+  </data>
+  <data name="TrayImportPreset" xml:space="preserve">
+    <value>Import preset…</value>
+  </data>
+  <data name="TrayImportFolder" xml:space="preserve">
+    <value>Import .md folder…</value>
+  </data>
+  <data name="TrayExportPreset" xml:space="preserve">
+    <value>Export current preset…</value>
+  </data>
+  <data name="TrayExportAll" xml:space="preserve">
+    <value>Export all (settings + presets)…</value>
+  </data>
+  <data name="TrayOpenDataFolder" xml:space="preserve">
+    <value>Open data folder</value>
+  </data>
+  <data name="TrayExit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="ControllerHotkeysBusy" xml:space="preserve">
+    <value>Hotkeys are in use</value>
+  </data>
+  <data name="ControllerImportSettingsTitle" xml:space="preserve">
+    <value>Import settings</value>
+  </data>
+  <data name="ControllerImportSettingsFailed" xml:space="preserve">
+    <value>Failed to import settings:
+{0}</value>
+  </data>
+  <data name="ControllerExportSettingsTitle" xml:space="preserve">
+    <value>Export settings</value>
+  </data>
+  <data name="ControllerExportSettingsFailed" xml:space="preserve">
+    <value>Failed to export settings:
+{0}</value>
+  </data>
+  <data name="ControllerExportBackupTitle" xml:space="preserve">
+    <value>Export settings and all presets</value>
+  </data>
+  <data name="ControllerExportBackupFailed" xml:space="preserve">
+    <value>Failed to save the backup:
+{0}</value>
+  </data>
+  <data name="ControllerImportBackupTitle" xml:space="preserve">
+    <value>Import settings and all presets</value>
+  </data>
+  <data name="ControllerImportBackupQuestion" xml:space="preserve">
+    <value>Replace current presets with the presets from the backup?
+
+Yes — replace (current presets and their images will be deleted)
+No — add to the current ones
+
+Settings and hotkeys will be replaced in any case.</value>
+  </data>
+  <data name="ControllerImportBackupFailed" xml:space="preserve">
+    <value>Failed to load the backup:
+{0}</value>
+  </data>
+  <data name="ControllerImportPresetTitle" xml:space="preserve">
+    <value>Import preset</value>
+  </data>
+  <data name="ControllerImportFolderTitle" xml:space="preserve">
+    <value>Folder with .md files</value>
+  </data>
+  <data name="ControllerExportPresetTitle" xml:space="preserve">
+    <value>Export preset</value>
+  </data>
+  <data name="ControllerExportPresetFailed" xml:space="preserve">
+    <value>Failed to export the preset:
+{0}</value>
+  </data>
+  <data name="ControllerSaveError" xml:space="preserve">
+    <value>Save error</value>
+  </data>
+  <data name="ControllerImportPresetFailed" xml:space="preserve">
+    <value>Failed to import the preset:
+{0}</value>
+  </data>
+  <data name="ControllerIssueInPage" xml:space="preserve">
+    <value>“{0}” — {1}</value>
+  </data>
+  <data name="ControllerIssuesMore" xml:space="preserve">
+    <value>
+… and {0} more</value>
+  </data>
+  <data name="ControllerImportIssues" xml:space="preserve">
+    <value>Preset “{0}” was imported, but it has errors:
+
+{1}
+
+They are also shown in the editor below the tab text.</value>
+  </data>
+  <data name="ControllerRegisterHotkeysFailed" xml:space="preserve">
+    <value>Failed to register hotkeys:
+{0}</value>
+  </data>
+  <data name="ArchiveCannotReadManifest" xml:space="preserve">
+    <value>Failed to read manifest.json</value>
+  </data>
+  <data name="BackupDialogFilter" xml:space="preserve">
+    <value>Focus Overlay backup (*.foverlay-backup;*.zip)|*.foverlay-backup;*.zip|All files (*.*)|*.*</value>
+  </data>
+  <data name="BackupNotBackup" xml:space="preserve">
+    <value>The file is not a Focus Overlay backup</value>
+  </data>
+  <data name="BackupNewerVersion" xml:space="preserve">
+    <value>The backup was created by a newer version (format v{0})</value>
+  </data>
+  <data name="BackupNoSettings" xml:space="preserve">
+    <value>The backup does not contain settings.json</value>
+  </data>
+  <data name="SettingsDialogFilter" xml:space="preserve">
+    <value>Focus Overlay settings (*.json)|*.json|All files (*.*)|*.*</value>
+  </data>
+  <data name="SettingsFileEmpty" xml:space="preserve">
+    <value>The file is empty</value>
+  </data>
+  <data name="SettingsNotSettings" xml:space="preserve">
+    <value>The file is not Focus Overlay settings</value>
+  </data>
+  <data name="SettingsNewerVersion" xml:space="preserve">
+    <value>The settings were created by a newer version (format v{0})</value>
+  </data>
+  <data name="PresetDialogFilter" xml:space="preserve">
+    <value>Overlay preset (*.foverlay;*.zip)|*.foverlay;*.zip|All files (*.*)|*.*</value>
+  </data>
+  <data name="PresetArchiveEmpty" xml:space="preserve">
+    <value>The archive contains neither manifest.json nor .md files</value>
+  </data>
+  <data name="PresetArchiveMissingEntry" xml:space="preserve">
+    <value>The archive does not contain {0}</value>
+  </data>
+  <data name="PresetNotPreset" xml:space="preserve">
+    <value>The archive is not a Focus Overlay preset</value>
+  </data>
+  <data name="PresetNewerVersion" xml:space="preserve">
+    <value>The preset was created by a newer version (format v{0})</value>
+  </data>
+  <data name="PresetFolderNoMarkdown" xml:space="preserve">
+    <value>The folder contains no .md files</value>
+  </data>
+  <data name="ModelNewPage" xml:space="preserve">
+    <value>New tab</value>
+  </data>
+  <data name="ModelNewPreset" xml:space="preserve">
+    <value>New preset</value>
+  </data>
+  <data name="ModelPageNumbered" xml:space="preserve">
+    <value>Tab {0}</value>
+  </data>
+  <data name="ModelSamplePreset" xml:space="preserve">
+    <value>Sample</value>
+  </data>
+  <data name="ModelSampleContent" xml:space="preserve">
+    <value># Focus Overlay
+
+- Double-click the tray icon — **editor**
+- Right-click — menu and **settings**
+- `Ctrl+Alt+O` — show / hide
+- `Ctrl+Alt+←` / `→` — tabs
+- `Ctrl+Alt+P` — next preset</value>
+  </data>
+  <data name="DiagLine" xml:space="preserve">
+    <value>Line {0}: {1}</value>
+  </data>
+  <data name="DiagImageNoFile" xml:space="preserve">
+    <value>image file is not specified</value>
+  </data>
+  <data name="DiagImageNotFound" xml:space="preserve">
+    <value>image not found: {0}</value>
+  </data>
+  <data name="DiagNotImage" xml:space="preserve">
+    <value>file is not an image: {0}</value>
+  </data>
+  <data name="DiagImagePathSpace" xml:space="preserve">
+    <value>space in image path “{0}”: replace spaces with %20 or use ![[{0}]]</value>
+  </data>
+  <data name="DiagSystemOnlyBlocks" xml:space="preserve">
+    <value>system.md only uses ```{0} blocks, everything else is ignored</value>
+  </data>
+  <data name="DiagNotKeyValue" xml:space="preserve">
+    <value>line “{0}” is not in “parameter: value” format</value>
+  </data>
+  <data name="DiagUnknownParameter" xml:space="preserve">
+    <value>unknown parameter “{0}”</value>
+  </data>
+  <data name="DiagInvalidValue" xml:space="preserve">
+    <value>invalid value “{0}” for “{1}”, expected {2}</value>
+  </data>
+  <data name="DiagExpectedCorner" xml:space="preserve">
+    <value>top-left, top-center, top-right, bottom-left, bottom-center or bottom-right</value>
+  </data>
+  <data name="DiagExpectedPixels" xml:space="preserve">
+    <value>a number of pixels</value>
+  </data>
+  <data name="DiagExpectedPositive" xml:space="preserve">
+    <value>a number greater than 0, e.g. 1.2</value>
+  </data>
+  <data name="DiagExpectedFontSize" xml:space="preserve">
+    <value>a number from 6 to 48</value>
+  </data>
+  <data name="DiagExpectedOpacity" xml:space="preserve">
+    <value>0.5 or 50%</value>
+  </data>
+  <data name="DiagExpectedColor" xml:space="preserve">
+    <value>color: #RRGGBB, #AARRGGBB or a name</value>
+  </data>
+  <data name="SettingsLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SettingsLanguageSystem" xml:space="preserve">
+    <value>System default</value>
+  </data>
+  <data name="SettingsLanguageRestart" xml:space="preserve">
+    <value>The language will change after a restart. Restart now?</value>
+  </data>
+  <data name="LanguageNameRussian" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="LanguageNameEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+</root>

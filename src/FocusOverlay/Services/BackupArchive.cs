@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text.Json;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 
 namespace FocusOverlay.Services;
 
@@ -12,7 +13,7 @@ public sealed record BackupContents(string SettingsJson, IReadOnlyList<Preset> P
 public static class BackupArchive
 {
     public const string FileExtension = ".foverlay-backup";
-    public const string DialogFilter = "Резервная копия Focus Overlay (*.foverlay-backup;*.zip)|*.foverlay-backup;*.zip|Все файлы (*.*)|*.*";
+    public static string DialogFilter => Strings.BackupDialogFilter;
 
     private const string FormatId = "focus-overlay-backup";
     private const int FormatVersion = 1;
@@ -56,22 +57,22 @@ public static class BackupArchive
     {
         using var archive = ZipFile.OpenRead(path);
         var manifestEntry = archive.GetEntry(ManifestName)
-            ?? throw new InvalidDataException("Файл не является резервной копией Focus Overlay");
+            ?? throw new InvalidDataException(Strings.BackupNotBackup);
         var manifest = JsonSerializer.Deserialize<BackupManifest>(PresetArchive.ReadText(manifestEntry), _options)
-            ?? throw new InvalidDataException("Не удалось прочитать manifest.json");
+            ?? throw new InvalidDataException(Strings.ArchiveCannotReadManifest);
 
         if (manifest.Format != FormatId)
         {
-            throw new InvalidDataException("Файл не является резервной копией Focus Overlay");
+            throw new InvalidDataException(Strings.BackupNotBackup);
         }
 
         if (manifest.Version > FormatVersion)
         {
-            throw new InvalidDataException($"Копия создана более новой версией (формат v{manifest.Version})");
+            throw new InvalidDataException(string.Format(Strings.BackupNewerVersion, manifest.Version));
         }
 
         var settingsEntry = archive.GetEntry(SettingsName)
-            ?? throw new InvalidDataException("В копии нет settings.json");
+            ?? throw new InvalidDataException(Strings.BackupNoSettings);
         var settingsJson = PresetArchive.ReadText(settingsEntry);
 
         var presets = new List<Preset>();

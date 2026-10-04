@@ -1,8 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using FocusOverlay.Models;
+using FocusOverlay.Properties;
 using FocusOverlay.Services;
 
 namespace FocusOverlay;
@@ -14,12 +17,13 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        LanguageManager.Apply(AppLanguage.System);
         base.OnStartup(e);
 
         _instanceMutex = new Mutex(true, "FocusOverlay.SingleInstance", out var isFirstInstance);
         if (!isFirstInstance)
         {
-            MessageBox.Show("Focus Overlay уже запущен — ищите иконку в трее.", "Focus Overlay");
+            MessageBox.Show(Strings.AppAlreadyRunning, "Focus Overlay");
             _instanceMutex.Dispose();
             _instanceMutex = null;
             Shutdown();
@@ -27,7 +31,9 @@ public partial class App : Application
         }
 
         DispatcherUnhandledException += OnDispatcherUnhandledException;
-        _controller = new OverlayController();
+        var state = StateStore.Load();
+        LanguageManager.Apply(state.Settings.Language);
+        _controller = new OverlayController(state);
         _controller.Start();
     }
 
@@ -38,6 +44,11 @@ public partial class App : Application
         {
             _instanceMutex.ReleaseMutex();
             _instanceMutex.Dispose();
+        }
+
+        if (_controller?.RestartRequested == true && Environment.ProcessPath != null)
+        {
+            Process.Start(Environment.ProcessPath);
         }
 
         base.OnExit(e);
@@ -56,7 +67,7 @@ public partial class App : Application
         {
         }
 
-        MessageBox.Show(e.Exception.Message, "Focus Overlay — ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(e.Exception.Message, Strings.AppErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
         e.Handled = true;
     }
 }

@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 using FocusOverlay.Services;
 
 namespace FocusOverlay.Views;
@@ -32,13 +33,22 @@ public partial class SettingsWindow : Window
 
         StripCornerCombo.ItemsSource = new[]
         {
-            new CornerOption(OverlayCorner.TopLeft, "Левый верхний"),
-            new CornerOption(OverlayCorner.TopCenter, "Сверху по центру"),
-            new CornerOption(OverlayCorner.TopRight, "Правый верхний"),
-            new CornerOption(OverlayCorner.BottomLeft, "Левый нижний"),
-            new CornerOption(OverlayCorner.BottomCenter, "Снизу по центру"),
-            new CornerOption(OverlayCorner.BottomRight, "Правый нижний"),
+            new CornerOption(OverlayCorner.TopLeft, Strings.CornerTopLeft),
+            new CornerOption(OverlayCorner.TopCenter, Strings.CornerTopCenter),
+            new CornerOption(OverlayCorner.TopRight, Strings.CornerTopRight),
+            new CornerOption(OverlayCorner.BottomLeft, Strings.CornerBottomLeft),
+            new CornerOption(OverlayCorner.BottomCenter, Strings.CornerBottomCenter),
+            new CornerOption(OverlayCorner.BottomRight, Strings.CornerBottomRight),
         };
+
+        LanguageCombo.ItemsSource = new[]
+        {
+            new LanguageOption(AppLanguage.System, Strings.SettingsLanguageSystem),
+            new LanguageOption(AppLanguage.Russian, Strings.LanguageNameRussian),
+            new LanguageOption(AppLanguage.English, Strings.LanguageNameEnglish),
+        };
+        LanguageCombo.SelectedValue = _controller.Settings.Language;
+        LanguageCombo.SelectionChanged += OnLanguageChanged;
 
         AddHandler(TextBoxBase.TextChangedEvent, new TextChangedEventHandler(OnAnyChange));
         AddHandler(RangeBase.ValueChangedEvent, new RoutedPropertyChangedEventHandler<double>(OnAnyChange));
@@ -103,6 +113,24 @@ public partial class SettingsWindow : Window
         _controller.ScheduleRefresh();
     }
 
+    private void OnLanguageChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (LanguageCombo.SelectedValue is not AppLanguage language || language == _controller.Settings.Language)
+        {
+            return;
+        }
+
+        _controller.Settings.Language = language;
+        _controller.Save();
+
+        var answer = MessageBox.Show(this, Strings.SettingsLanguageRestart, Title,
+            MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (answer == MessageBoxResult.Yes)
+        {
+            _controller.Restart();
+        }
+    }
+
     private void OnImportClick(object sender, RoutedEventArgs e) => _controller.ImportSettings(this);
 
     private void OnExportClick(object sender, RoutedEventArgs e) => _controller.ExportSettings(this);
@@ -113,7 +141,7 @@ public partial class SettingsWindow : Window
 
     private void OnResetClick(object sender, RoutedEventArgs e)
     {
-        var answer = MessageBox.Show(this, "Сбросить положение, вид и горячие клавиши к значениям по умолчанию?", Title,
+        var answer = MessageBox.Show(this, Strings.SettingsResetConfirm, Title,
             MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (answer == MessageBoxResult.Yes)
         {
@@ -131,21 +159,21 @@ public partial class SettingsWindow : Window
         var hotkeys = _controller.Settings.Hotkeys;
         var rows = new (string Label, Func<string> Get, Action<string> Set)[]
         {
-            ("Показать / скрыть", () => hotkeys.Toggle, value => hotkeys.Toggle = value),
-            ("Следующая вкладка", () => hotkeys.NextPage, value => hotkeys.NextPage = value),
-            ("Предыдущая вкладка", () => hotkeys.PrevPage, value => hotkeys.PrevPage = value),
-            ("Масштаб +", () => hotkeys.ZoomIn, value => hotkeys.ZoomIn = value),
-            ("Масштаб −", () => hotkeys.ZoomOut, value => hotkeys.ZoomOut = value),
-            ("Прокрутка вверх", () => hotkeys.ScrollUp, value => hotkeys.ScrollUp = value),
-            ("Прокрутка вниз", () => hotkeys.ScrollDown, value => hotkeys.ScrollDown = value),
-            ("Следующий пресет", () => hotkeys.NextPreset, value => hotkeys.NextPreset = value),
-            ("Предыдущий пресет", () => hotkeys.PrevPreset, value => hotkeys.PrevPreset = value),
-            ("Оверлей вверх", () => hotkeys.MoveTop, value => hotkeys.MoveTop = value),
-            ("Оверлей вниз", () => hotkeys.MoveBottom, value => hotkeys.MoveBottom = value),
-            ("Оверлей влево", () => hotkeys.MoveLeft, value => hotkeys.MoveLeft = value),
-            ("Оверлей по центру", () => hotkeys.MoveCenter, value => hotkeys.MoveCenter = value),
-            ("Оверлей вправо", () => hotkeys.MoveRight, value => hotkeys.MoveRight = value),
-            ("Сбросить положение и масштаб", () => hotkeys.ResetUserView, value => hotkeys.ResetUserView = value),
+            (Strings.CommonToggle, () => hotkeys.Toggle, value => hotkeys.Toggle = value),
+            (Strings.HotkeyNextPage, () => hotkeys.NextPage, value => hotkeys.NextPage = value),
+            (Strings.HotkeyPrevPage, () => hotkeys.PrevPage, value => hotkeys.PrevPage = value),
+            (Strings.HotkeyZoomIn, () => hotkeys.ZoomIn, value => hotkeys.ZoomIn = value),
+            (Strings.HotkeyZoomOut, () => hotkeys.ZoomOut, value => hotkeys.ZoomOut = value),
+            (Strings.HotkeyScrollUp, () => hotkeys.ScrollUp, value => hotkeys.ScrollUp = value),
+            (Strings.HotkeyScrollDown, () => hotkeys.ScrollDown, value => hotkeys.ScrollDown = value),
+            (Strings.HotkeyNextPreset, () => hotkeys.NextPreset, value => hotkeys.NextPreset = value),
+            (Strings.HotkeyPrevPreset, () => hotkeys.PrevPreset, value => hotkeys.PrevPreset = value),
+            (Strings.HotkeyMoveTop, () => hotkeys.MoveTop, value => hotkeys.MoveTop = value),
+            (Strings.HotkeyMoveBottom, () => hotkeys.MoveBottom, value => hotkeys.MoveBottom = value),
+            (Strings.HotkeyMoveLeft, () => hotkeys.MoveLeft, value => hotkeys.MoveLeft = value),
+            (Strings.HotkeyMoveCenter, () => hotkeys.MoveCenter, value => hotkeys.MoveCenter = value),
+            (Strings.HotkeyMoveRight, () => hotkeys.MoveRight, value => hotkeys.MoveRight = value),
+            (Strings.CommonResetUserView, () => hotkeys.ResetUserView, value => hotkeys.ResetUserView = value),
         };
 
         foreach (var (label, get, set) in rows)
@@ -216,10 +244,12 @@ public partial class SettingsWindow : Window
     {
         var failed = _controller.RegisterHotkeys();
         HotkeyStatus.Text = failed.Count > 0
-            ? $"Не удалось зарегистрировать (заняты другой программой?): {string.Join(", ", failed)}"
+            ? string.Format(Strings.HotkeyRegisterFailedInline, string.Join(", ", failed))
             : string.Empty;
         _controller.ScheduleRefresh();
     }
 
     public sealed record CornerOption(OverlayCorner Value, string Label);
+
+    public sealed record LanguageOption(AppLanguage Value, string Label);
 }

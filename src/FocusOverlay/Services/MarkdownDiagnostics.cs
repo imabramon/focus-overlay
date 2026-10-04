@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
@@ -13,7 +14,7 @@ namespace FocusOverlay.Services;
 
 public sealed record MarkdownIssue(int Line, string Message)
 {
-    public string Text => $"Строка {Line + 1}: {Message}";
+    public string Text => string.Format(Strings.DiagLine, Line + 1, Message);
 }
 
 public static class MarkdownDiagnostics
@@ -54,18 +55,18 @@ public static class MarkdownDiagnostics
     {
         if (string.IsNullOrWhiteSpace(url))
         {
-            return "у изображения не указан файл";
+            return Strings.DiagImageNoFile;
         }
 
         var uri = StateStore.ResolveAsset(preset, url);
         if (uri == null || (uri.IsFile && !File.Exists(uri.LocalPath)))
         {
-            return $"изображение не найдено: {url}";
+            return string.Format(Strings.DiagImageNotFound, url);
         }
 
         if (uri.IsFile && !StateStore.IsImageFile(uri.LocalPath))
         {
-            return $"файл не является изображением: {url}";
+            return string.Format(Strings.DiagNotImage, url);
         }
 
         return null;
@@ -86,7 +87,7 @@ public static class MarkdownDiagnostics
             }
 
             var line = lines.LastOrDefault(entry => entry.Offset <= match.Index).Line;
-            issues.Add(new MarkdownIssue(line, $"пробел в пути к изображению «{url}»: замените пробелы на %20 или используйте ![[{url}]]"));
+            issues.Add(new MarkdownIssue(line, string.Format(Strings.DiagImagePathSpace, url)));
         }
     }
 

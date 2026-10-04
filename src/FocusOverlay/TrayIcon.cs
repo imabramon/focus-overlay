@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using FocusOverlay.Properties;
 using FocusOverlay.Services;
 
 namespace FocusOverlay;
@@ -10,28 +11,28 @@ public sealed class TrayIcon : IDisposable
 {
     private readonly OverlayController _controller;
     private readonly NotifyIcon _icon;
-    private readonly ToolStripMenuItem _presetsMenu = new("Пресет");
+    private readonly ToolStripMenuItem _presetsMenu = new(Strings.CommonPreset);
 
     public TrayIcon(OverlayController controller)
     {
         _controller = controller;
 
         var menu = new ContextMenuStrip();
-        menu.Items.Add("Показать / скрыть", null, (_, _) => _controller.Toggle());
-        menu.Items.Add("Редактор…", null, (_, _) => _controller.OpenEditor());
-        menu.Items.Add("Настройки…", null, (_, _) => _controller.OpenSettings());
+        menu.Items.Add(Strings.CommonToggle, null, (_, _) => _controller.Toggle());
+        menu.Items.Add(Strings.TrayEditor, null, (_, _) => _controller.OpenEditor());
+        menu.Items.Add(Strings.CommonSettings, null, (_, _) => _controller.OpenSettings());
         menu.Items.Add(_presetsMenu);
-        menu.Items.Add("Сбросить положение и масштаб", null, (_, _) => _controller.ResetUserSetting());
+        menu.Items.Add(Strings.CommonResetUserView, null, (_, _) => _controller.ResetUserSetting());
         menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add("Импорт пресета…", null, (_, _) => _controller.ImportPreset(null));
-        menu.Items.Add("Импорт папки с .md…", null, (_, _) => _controller.ImportPresetFolder(null));
-        menu.Items.Add("Экспорт текущего пресета…", null, (_, _) => _controller.ExportPreset(_controller.State.ActivePreset, null));
+        menu.Items.Add(Strings.TrayImportPreset, null, (_, _) => _controller.ImportPreset(null));
+        menu.Items.Add(Strings.TrayImportFolder, null, (_, _) => _controller.ImportPresetFolder(null));
+        menu.Items.Add(Strings.TrayExportPreset, null, (_, _) => _controller.ExportPreset(_controller.State.ActivePreset, null));
         menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add("Экспорт всего (настройки + пресеты)…", null, (_, _) => _controller.ExportBackup(null));
-        menu.Items.Add("Импорт всего…", null, (_, _) => _controller.ImportBackup(null));
-        menu.Items.Add("Открыть папку данных", null, (_, _) => OpenDataFolder());
+        menu.Items.Add(Strings.TrayExportAll, null, (_, _) => _controller.ExportBackup(null));
+        menu.Items.Add(Strings.CommonImportAll, null, (_, _) => _controller.ImportBackup(null));
+        menu.Items.Add(Strings.TrayOpenDataFolder, null, (_, _) => OpenDataFolder());
         menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add("Выход", null, (_, _) => _controller.Exit());
+        menu.Items.Add(Strings.TrayExit, null, (_, _) => _controller.Exit());
         menu.Opening += (_, _) => RebuildPresetsMenu();
 
         _icon = new NotifyIcon

@@ -10,6 +10,13 @@ public enum OverlayCorner
     BottomCenter,
 }
 
+public enum AppLanguage
+{
+    System,
+    Russian,
+    English,
+}
+
 public sealed class HotkeySettings
 {
     public string Toggle { get; set; } = "Ctrl+Alt+O";
@@ -64,6 +71,7 @@ public sealed class AppSettings : ObservableObject
     public int ActivePageIndex { get; set; }
     public HotkeySettings Hotkeys { get; set; } = new();
     public TabStripSettings TabStrip { get; set; } = new();
+    public AppLanguage Language { get; set; } = AppLanguage.System;
 
     public double Scale
     {

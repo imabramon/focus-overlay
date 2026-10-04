@@ -1,11 +1,12 @@
 using System;
 using System.Collections.ObjectModel;
+using FocusOverlay.Properties;
 
 namespace FocusOverlay.Models;
 
 public sealed class OverlayPage : ObservableObject
 {
-    private string _title = "Новая вкладка";
+    private string _title = Strings.ModelNewPage;
     private string _content = string.Empty;
 
     public string Title
@@ -25,7 +26,7 @@ public sealed class Preset : ObservableObject
 {
     public const string SystemFileName = "system.md";
 
-    private string _name = "Новый пресет";
+    private string _name = Strings.ModelNewPreset;
     private string _systemContent = string.Empty;
 
     public string Id { get; set; } = Guid.NewGuid().ToString("N");

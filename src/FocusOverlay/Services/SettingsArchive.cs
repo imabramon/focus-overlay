@@ -3,13 +3,14 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 
 namespace FocusOverlay.Services;
 
 public static class SettingsArchive
 {
     public const string FileExtension = ".json";
-    public const string DialogFilter = "Настройки Focus Overlay (*.json)|*.json|Все файлы (*.*)|*.*";
+    public static string DialogFilter => Strings.SettingsDialogFilter;
 
     private const string FormatId = "focus-overlay-settings";
     private const int FormatVersion = 1;
@@ -42,16 +43,16 @@ public static class SettingsArchive
     public static void ApplyJson(string json, AppSettings target)
     {
         var file = JsonSerializer.Deserialize<SettingsFile>(json, _options)
-            ?? throw new InvalidDataException("Файл пуст");
+            ?? throw new InvalidDataException(Strings.SettingsFileEmpty);
 
         if (file.Format != FormatId)
         {
-            throw new InvalidDataException("Файл не является настройками Focus Overlay");
+            throw new InvalidDataException(Strings.SettingsNotSettings);
         }
 
         if (file.Version > FormatVersion)
         {
-            throw new InvalidDataException($"Настройки созданы более новой версией (формат v{file.Version})");
+            throw new InvalidDataException(string.Format(Strings.SettingsNewerVersion, file.Version));
         }
 
         (file.Overlay ?? new OverlayLayout()).ApplyTo(target);

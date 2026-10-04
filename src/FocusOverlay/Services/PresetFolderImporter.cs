@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using FocusOverlay.Models;
+using FocusOverlay.Properties;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
@@ -35,7 +36,7 @@ public static class PresetFolderImporter
 
         if (markdownFiles.Count == 0)
         {
-            throw new InvalidDataException("В папке нет .md файлов");
+            throw new InvalidDataException(Strings.PresetFolderNoMarkdown);
         }
 
         var preset = new Preset { Name = Path.GetFileName(root) };
