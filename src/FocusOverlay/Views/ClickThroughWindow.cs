@@ -61,14 +61,16 @@ public class ClickThroughWindow : Window
     protected void PlaceInCorner(OverlayCorner corner, double offsetX, double offsetY)
     {
         var isRight = corner is OverlayCorner.TopRight or OverlayCorner.BottomRight;
-        var isBottom = corner is OverlayCorner.BottomLeft or OverlayCorner.BottomRight;
+        var isCenter = corner is OverlayCorner.TopCenter or OverlayCorner.BottomCenter;
+        var isBottom = corner is OverlayCorner.BottomLeft or OverlayCorner.BottomRight or OverlayCorner.BottomCenter;
 
         var handle = new WindowInteropHelper(this).EnsureHandle();
         var monitor = MonitorFromPoint(default, MonitorDefaultToPrimary);
         var info = new MonitorInfo { Size = Marshal.SizeOf<MonitorInfo>() };
         if (monitor == IntPtr.Zero || !GetMonitorInfo(monitor, ref info) || GetDpiForMonitor(monitor, 0, out var dpi, out _) != 0)
         {
-            Left = isRight ? SystemParameters.PrimaryScreenWidth - Width - offsetX : offsetX;
+            var screenWidth = SystemParameters.PrimaryScreenWidth;
+            Left = isCenter ? (screenWidth - Width) / 2 + offsetX : isRight ? screenWidth - Width - offsetX : offsetX;
             Top = isBottom ? SystemParameters.PrimaryScreenHeight - Height - offsetY : offsetY;
             return;
         }
@@ -77,8 +79,12 @@ public class ClickThroughWindow : Window
         var width = (int)Math.Round(Width * factor);
         var height = (int)Math.Round(Height * factor);
         var bounds = info.Monitor;
-        var x = isRight ? bounds.Right - width - (int)Math.Round(offsetX * factor) : bounds.Left + (int)Math.Round(offsetX * factor);
-        var y = isBottom ? bounds.Bottom - height - (int)Math.Round(offsetY * factor) : bounds.Top + (int)Math.Round(offsetY * factor);
+        var shiftX = (int)Math.Round(offsetX * factor);
+        var shiftY = (int)Math.Round(offsetY * factor);
+        var x = isCenter ? bounds.Left + (bounds.Right - bounds.Left - width) / 2 + shiftX
+            : isRight ? bounds.Right - width - shiftX
+            : bounds.Left + shiftX;
+        var y = isBottom ? bounds.Bottom - height - shiftY : bounds.Top + shiftY;
 
         var dpiChanges = GetDpiForWindow(handle) != dpi;
         SetWindowPos(handle, IntPtr.Zero, x, y, width, height, SwpNoZOrder | SwpNoActivate);

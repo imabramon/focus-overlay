@@ -77,7 +77,7 @@ public static class PageDisplaySettings
             case "position":
                 if (!TryParseCorner(value, out var corner))
                 {
-                    return Invalid(name, value, "top-left, top-right, bottom-left или bottom-right");
+                    return Invalid(name, value, "top-left, top-center, top-right, bottom-left, bottom-center или bottom-right");
                 }
 
                 target.Corner = corner;
@@ -182,6 +182,8 @@ public static class PageDisplaySettings
             "topright" or "righttop" or "tr" => OverlayCorner.TopRight,
             "bottomleft" or "leftbottom" or "bl" => OverlayCorner.BottomLeft,
             "bottomright" or "rightbottom" or "br" => OverlayCorner.BottomRight,
+            "topcenter" or "centertop" or "top" or "tc" => OverlayCorner.TopCenter,
+            "bottomcenter" or "centerbottom" or "bottom" or "bc" => OverlayCorner.BottomCenter,
             _ => (OverlayCorner)(-1),
         };
         return Enum.IsDefined(corner);

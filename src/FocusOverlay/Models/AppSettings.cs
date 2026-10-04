@@ -6,6 +6,8 @@ public enum OverlayCorner
     TopRight,
     BottomLeft,
     BottomRight,
+    TopCenter,
+    BottomCenter,
 }
 
 public sealed class HotkeySettings

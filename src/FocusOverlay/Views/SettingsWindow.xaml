@@ -62,6 +62,10 @@
                                          HorizontalAlignment="Left" VerticalAlignment="Top" Checked="OnCornerChecked" />
                             <RadioButton x:Name="CornerTopRight" Style="{StaticResource CornerButton}" Content="↗"
                                          HorizontalAlignment="Right" VerticalAlignment="Top" Checked="OnCornerChecked" />
+                            <RadioButton x:Name="CornerTopCenter" Style="{StaticResource CornerButton}" Content="↑"
+                                         HorizontalAlignment="Center" VerticalAlignment="Top" Checked="OnCornerChecked" />
+                            <RadioButton x:Name="CornerBottomCenter" Style="{StaticResource CornerButton}" Content="↓"
+                                         HorizontalAlignment="Center" VerticalAlignment="Bottom" Checked="OnCornerChecked" />
                             <RadioButton x:Name="CornerBottomLeft" Style="{StaticResource CornerButton}" Content="↙"
                                          HorizontalAlignment="Left" VerticalAlignment="Bottom" Checked="OnCornerChecked" />
                             <RadioButton x:Name="CornerBottomRight" Style="{StaticResource CornerButton}" Content="↘"

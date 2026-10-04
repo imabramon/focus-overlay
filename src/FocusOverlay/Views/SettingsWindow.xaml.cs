@@ -23,16 +23,20 @@ public partial class SettingsWindow : Window
         _cornerButtons = new Dictionary<RadioButton, OverlayCorner>
         {
             [CornerTopLeft] = OverlayCorner.TopLeft,
+            [CornerTopCenter] = OverlayCorner.TopCenter,
             [CornerTopRight] = OverlayCorner.TopRight,
             [CornerBottomLeft] = OverlayCorner.BottomLeft,
+            [CornerBottomCenter] = OverlayCorner.BottomCenter,
             [CornerBottomRight] = OverlayCorner.BottomRight,
         };
 
         StripCornerCombo.ItemsSource = new[]
         {
             new CornerOption(OverlayCorner.TopLeft, "Левый верхний"),
+            new CornerOption(OverlayCorner.TopCenter, "Сверху по центру"),
             new CornerOption(OverlayCorner.TopRight, "Правый верхний"),
             new CornerOption(OverlayCorner.BottomLeft, "Левый нижний"),
+            new CornerOption(OverlayCorner.BottomCenter, "Снизу по центру"),
             new CornerOption(OverlayCorner.BottomRight, "Правый нижний"),
         };
 
