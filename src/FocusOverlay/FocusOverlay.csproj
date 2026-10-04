@@ -11,7 +11,7 @@
     <AssemblyName>FocusOverlay</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\eye.ico</ApplicationIcon>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
     <NeutralLanguage>en</NeutralLanguage>
     <SatelliteResourceLanguages>en;ru</SatelliteResourceLanguages>
     <NoWarn>$(NoWarn);WFAC010</NoWarn>
