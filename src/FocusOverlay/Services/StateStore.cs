@@ -119,7 +119,12 @@ public static class StateStore
             return new Uri(fullPath);
         }
 
-        var byName = FindAssetByName(directory, Path.GetFileName(fullPath));
+        if (relative.Contains(Path.DirectorySeparatorChar))
+        {
+            return null;
+        }
+
+        var byName = FindAssetByName(directory, relative);
         return byName != null ? new Uri(byName) : null;
     }
 
