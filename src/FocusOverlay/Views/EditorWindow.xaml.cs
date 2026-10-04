@@ -58,10 +58,12 @@ public partial class EditorWindow : Window
         _issuesTimer.Start();
     }
 
+    private bool IsSystemMode => SystemToggle.IsChecked == true;
+
     private void UpdateIssues()
     {
-        var issues = PageList.SelectedItem is OverlayPage page
-            ? MarkdownDiagnostics.Analyze(ActivePreset, page.Content)
+        var issues = IsSystemMode ? MarkdownDiagnostics.AnalyzeSystem(ActivePreset.SystemContent)
+            : PageList.SelectedItem is OverlayPage page ? MarkdownDiagnostics.Analyze(ActivePreset, page.Content)
             : Array.Empty<MarkdownIssue>();
         IssueList.ItemsSource = issues;
         IssueList.Visibility = issues.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -74,7 +76,8 @@ public partial class EditorWindow : Window
             return;
         }
 
-        var text = ContentBox.Text;
+        var box = IsSystemMode ? SystemBox : ContentBox;
+        var text = box.Text;
         var start = 0;
         for (var line = 0; line < issue.Line; line++)
         {
@@ -89,9 +92,16 @@ public partial class EditorWindow : Window
 
         var end = text.IndexOf('\n', start);
         var length = (end < 0 ? text.Length : end) - start;
-        ContentBox.Focus();
-        ContentBox.Select(start, Math.Max(0, length - (length > 0 && text[start + length - 1] == '\r' ? 1 : 0)));
-        ContentBox.ScrollToLine(ContentBox.GetLineIndexFromCharacterIndex(start));
+        box.Focus();
+        box.Select(start, Math.Max(0, length - (length > 0 && text[start + length - 1] == '\r' ? 1 : 0)));
+        box.ScrollToLine(box.GetLineIndexFromCharacterIndex(start));
+    }
+
+    private void OnSystemToggled(object sender, RoutedEventArgs e)
+    {
+        PageEditor.Visibility = IsSystemMode ? Visibility.Collapsed : Visibility.Visible;
+        SystemEditor.Visibility = IsSystemMode ? Visibility.Visible : Visibility.Collapsed;
+        UpdateIssues();
     }
 
     private void SyncSelection()
@@ -109,6 +119,7 @@ public partial class EditorWindow : Window
             PageList.SelectedIndex = preset.Pages.Count > 0 ? _controller.Settings.ActivePageIndex : -1;
             PageList.ScrollIntoView(PageList.SelectedItem);
             PageEditor.IsEnabled = PageList.SelectedItem != null;
+            SystemEditor.DataContext = preset;
         }
         finally
         {
@@ -131,6 +142,7 @@ public partial class EditorWindow : Window
         PageEditor.IsEnabled = PageList.SelectedItem != null;
         if (!_syncing && PageList.SelectedIndex >= 0)
         {
+            SystemToggle.IsChecked = false;
             _controller.SelectPage(PageList.SelectedIndex);
         }
     }

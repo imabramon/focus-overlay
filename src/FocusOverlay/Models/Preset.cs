@@ -23,7 +23,10 @@ public sealed class OverlayPage : ObservableObject
 
 public sealed class Preset : ObservableObject
 {
+    public const string SystemFileName = "system.md";
+
     private string _name = "Новый пресет";
+    private string _systemContent = string.Empty;
 
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
 
@@ -31,6 +34,12 @@ public sealed class Preset : ObservableObject
     {
         get => _name;
         set => SetField(ref _name, value);
+    }
+
+    public string SystemContent
+    {
+        get => _systemContent;
+        set => SetField(ref _systemContent, value ?? string.Empty);
     }
 
     public ObservableCollection<OverlayPage> Pages { get; set; } = new();

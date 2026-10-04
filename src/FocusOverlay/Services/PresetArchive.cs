@@ -45,8 +45,14 @@ public static class PresetArchive
         }
 
         var preset = new Preset { Name = Path.GetFileNameWithoutExtension(path) };
+        var systemEntry = archive.Entries.FirstOrDefault(entry => IsSystemEntry(entry, string.Empty));
+        if (systemEntry != null)
+        {
+            preset.SystemContent = ReadText(systemEntry);
+        }
+
         var markdownEntries = archive.Entries
-            .Where(entry => entry.FullName.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+            .Where(entry => entry.FullName.EndsWith(".md", StringComparison.OrdinalIgnoreCase) && entry != systemEntry)
             .OrderBy(entry => entry.FullName, StringComparer.OrdinalIgnoreCase);
 
         foreach (var entry in markdownEntries)
@@ -70,6 +76,11 @@ public static class PresetArchive
     public static void WriteTo(ZipArchive archive, Preset preset, string prefix)
     {
         var manifest = new PresetManifest { Format = FormatId, Version = FormatVersion, Name = preset.Name };
+        if (!string.IsNullOrWhiteSpace(preset.SystemContent))
+        {
+            WriteText(archive, prefix + Preset.SystemFileName, preset.SystemContent);
+            manifest.System = Preset.SystemFileName;
+        }
 
         for (var i = 0; i < preset.Pages.Count; i++)
         {
@@ -110,6 +121,10 @@ public static class PresetArchive
         }
 
         var preset = new Preset { Name = string.IsNullOrWhiteSpace(manifest.Name) ? "Пресет" : manifest.Name };
+        if (!string.IsNullOrWhiteSpace(manifest.System) && archive.GetEntry(prefix + manifest.System) is { } systemEntry)
+        {
+            preset.SystemContent = ReadText(systemEntry);
+        }
         foreach (var page in manifest.Pages)
         {
             var entry = archive.GetEntry(prefix + page.File);
@@ -136,6 +151,9 @@ public static class PresetArchive
         using var reader = new StreamReader(entry.Open(), Encoding.UTF8, true);
         return reader.ReadToEnd();
     }
+
+    private static bool IsSystemEntry(ZipArchiveEntry entry, string prefix) =>
+        string.Equals(entry.FullName, prefix + Preset.SystemFileName, StringComparison.OrdinalIgnoreCase);
 
     private static void ExtractAssets(ZipArchive archive, Preset preset, string prefix)
     {
@@ -166,6 +184,7 @@ public static class PresetArchive
         public string Format { get; set; } = string.Empty;
         public int Version { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string? System { get; set; }
         public List<PresetManifestPage> Pages { get; set; } = new();
     }
 

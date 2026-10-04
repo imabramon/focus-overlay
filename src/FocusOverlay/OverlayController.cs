@@ -75,6 +75,12 @@ public sealed class OverlayController : IDisposable
             (hotkeys.ScrollDown, () => _overlay.ScrollBy(Settings.FontSize * 4), true),
             (hotkeys.NextPreset, () => ChangePreset(1), false),
             (hotkeys.PrevPreset, () => ChangePreset(-1), false),
+            (hotkeys.MoveTop, () => MoveOverlay(vertical: false), false),
+            (hotkeys.MoveBottom, () => MoveOverlay(vertical: true), false),
+            (hotkeys.MoveLeft, () => MoveOverlay(horizontal: -1), false),
+            (hotkeys.MoveCenter, () => MoveOverlay(horizontal: 0), false),
+            (hotkeys.MoveRight, () => MoveOverlay(horizontal: 1), false),
+            (hotkeys.ResetUserView, ResetUserSetting, false),
         };
 
         return bindings
@@ -123,16 +129,57 @@ public sealed class OverlayController : IDisposable
         var preset = _state.ActivePreset;
         var pageIndex = Settings.ActivePageIndex;
         var page = pageIndex < preset.Pages.Count ? preset.Pages[pageIndex] : null;
-        var effective = PageDisplaySettings.Resolve(Settings, page?.Content);
+        var view = ResolveView(preset, page);
+        var zoom = _state.UserSetting.Scale ?? 1;
         var strip = Settings.TabStrip;
-        var stripHeight = strip.Visible ? _tabStrip.Apply(Settings, preset, pageIndex, _state.Presets.Count) : 0;
+        var stripHeight = strip.Visible ? _tabStrip.Apply(Settings, zoom, preset, pageIndex, _state.Presets.Count) : 0;
         var stripCorner = strip.Detached ? strip.Corner : Settings.Corner;
         var stripOffsetY = strip.Detached ? strip.OffsetY : Settings.OffsetY;
-        var minOffsetY = stripHeight > 0 && stripCorner == effective.Corner
-            ? stripOffsetY + stripHeight + StripGap * Settings.Scale
+        var minOffsetY = stripHeight > 0 && stripCorner == view.Corner
+            ? stripOffsetY + stripHeight + StripGap * Settings.Scale * zoom
             : 0;
-        _overlay.Apply(effective, preset, page, minOffsetY);
+        _overlay.Apply(view, preset, page, minOffsetY);
         UpdateVisibility();
+    }
+
+    private TabView ResolveView(Preset preset, OverlayPage? page) =>
+        TabViewSetting.Resolve(
+            TabViewSetting.FromSettings(Settings),
+            TabViewSetting.FromMarkdown(preset.SystemContent),
+            TabViewSetting.FromMarkdown(page?.Content),
+            _state.UserSetting);
+
+    public void ResetUserSetting()
+    {
+        _state.UserSetting = new TabViewSetting();
+        Refresh();
+        ScheduleSave();
+    }
+
+    private void MoveOverlay(bool? vertical = null, int? horizontal = null)
+    {
+        var preset = _state.ActivePreset;
+        var pageIndex = Settings.ActivePageIndex;
+        var current = ResolveView(preset, pageIndex < preset.Pages.Count ? preset.Pages[pageIndex] : null).Corner;
+        var isBottom = vertical ?? current is OverlayCorner.BottomLeft or OverlayCorner.BottomCenter or OverlayCorner.BottomRight;
+        var column = horizontal ?? current switch
+        {
+            OverlayCorner.TopLeft or OverlayCorner.BottomLeft => -1,
+            OverlayCorner.TopRight or OverlayCorner.BottomRight => 1,
+            _ => 0,
+        };
+
+        _state.UserSetting.Corner = (isBottom, column) switch
+        {
+            (false, < 0) => OverlayCorner.TopLeft,
+            (false, 0) => OverlayCorner.TopCenter,
+            (false, _) => OverlayCorner.TopRight,
+            (true, < 0) => OverlayCorner.BottomLeft,
+            (true, 0) => OverlayCorner.BottomCenter,
+            (true, _) => OverlayCorner.BottomRight,
+        };
+        Refresh();
+        ScheduleSave();
     }
 
     private void UpdateVisibility()
@@ -449,7 +496,9 @@ public sealed class OverlayController : IDisposable
 
     private void Zoom(double delta)
     {
-        Settings.Scale = Math.Round(Math.Clamp(Settings.Scale + delta, 0.5, 3.0), 2);
+        var user = _state.UserSetting;
+        var zoom = Math.Round(Math.Clamp((user.Scale ?? 1) + delta, 0.3, 3.0), 2);
+        user.Scale = Math.Abs(zoom - 1) < 0.001 ? null : zoom;
         Refresh();
         ScheduleSave();
     }
@@ -481,8 +530,10 @@ public sealed class OverlayController : IDisposable
     private static void ShowImportIssues(Preset preset, Window? owner)
     {
         const int limit = 20;
-        var issues = preset.Pages
-            .SelectMany(page => MarkdownDiagnostics.Analyze(preset, page.Content).Select(issue => $"«{page.Title}» — {issue.Text}"))
+        var issues = MarkdownDiagnostics.AnalyzeSystem(preset.SystemContent)
+            .Select(issue => $"{Preset.SystemFileName} — {issue.Text}")
+            .Concat(preset.Pages.SelectMany(page => MarkdownDiagnostics.Analyze(preset, page.Content)
+                .Select(issue => $"«{page.Title}» — {issue.Text}")))
             .ToList();
 
         if (issues.Count == 0)

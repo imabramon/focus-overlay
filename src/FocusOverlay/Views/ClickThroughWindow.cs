@@ -70,7 +70,7 @@ public class ClickThroughWindow : Window
         if (monitor == IntPtr.Zero || !GetMonitorInfo(monitor, ref info) || GetDpiForMonitor(monitor, 0, out var dpi, out _) != 0)
         {
             var screenWidth = SystemParameters.PrimaryScreenWidth;
-            Left = isCenter ? (screenWidth - Width) / 2 + offsetX : isRight ? screenWidth - Width - offsetX : offsetX;
+            Left = isCenter ? (screenWidth - Width) / 2 : isRight ? screenWidth - Width - offsetX : offsetX;
             Top = isBottom ? SystemParameters.PrimaryScreenHeight - Height - offsetY : offsetY;
             return;
         }
@@ -81,7 +81,7 @@ public class ClickThroughWindow : Window
         var bounds = info.Monitor;
         var shiftX = (int)Math.Round(offsetX * factor);
         var shiftY = (int)Math.Round(offsetY * factor);
-        var x = isCenter ? bounds.Left + (bounds.Right - bounds.Left - width) / 2 + shiftX
+        var x = isCenter ? bounds.Left + (bounds.Right - bounds.Left - width) / 2
             : isRight ? bounds.Right - width - shiftX
             : bounds.Left + shiftX;
         var y = isBottom ? bounds.Bottom - height - shiftY : bounds.Top + shiftY;
@@ -116,14 +116,9 @@ public class ClickThroughWindow : Window
         return brush;
     }
 
-    protected static Color TextColorOf(AppSettings settings) =>
-        ParseColor(settings.TextColor, Color.FromRgb(0xF0, 0xE6, 0xD2));
+    protected static Color DefaultTextColor => Color.FromRgb(0xF0, 0xE6, 0xD2);
 
-    protected static Color AccentColorOf(AppSettings settings) =>
-        ParseColor(settings.AccentColor, Color.FromRgb(0xE0, 0xA0, 0x40));
-
-    protected static SolidColorBrush BackgroundOf(AppSettings settings) =>
-        FrozenBrush(Color.FromArgb((byte)(settings.BackgroundOpacity * 255), 0, 0, 0));
+    protected static Color DefaultAccentColor => Color.FromRgb(0xE0, 0xA0, 0x40);
 
     private void EnsureTopmost()
     {

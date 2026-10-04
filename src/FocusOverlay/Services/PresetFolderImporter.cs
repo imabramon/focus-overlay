@@ -28,6 +28,7 @@ public static class PresetFolderImporter
         var markdownFiles = EnumerateVisibleFiles(root)
             .Where(relative => relative.EndsWith(".md", StringComparison.OrdinalIgnoreCase)
                 || relative.EndsWith(".markdown", StringComparison.OrdinalIgnoreCase))
+            .Where(relative => !IsSystemFile(relative))
             .OrderBy(Path.GetDirectoryName, _explorerOrder)
             .ThenBy(Path.GetFileName, _explorerOrder)
             .ToList();
@@ -38,6 +39,11 @@ public static class PresetFolderImporter
         }
 
         var preset = new Preset { Name = Path.GetFileName(root) };
+        var systemPath = Path.Combine(root, Preset.SystemFileName);
+        if (File.Exists(systemPath))
+        {
+            preset.SystemContent = File.ReadAllText(systemPath, Encoding.UTF8);
+        }
 
         foreach (var relative in markdownFiles)
         {
@@ -53,6 +59,9 @@ public static class PresetFolderImporter
         CopyImages(root, preset);
         return preset;
     }
+
+    private static bool IsSystemFile(string relative) =>
+        string.Equals(relative, Preset.SystemFileName, StringComparison.OrdinalIgnoreCase);
 
     private static IEnumerable<string> EnumerateVisibleFiles(string root) =>
         Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories)

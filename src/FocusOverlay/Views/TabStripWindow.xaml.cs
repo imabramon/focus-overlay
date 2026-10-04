@@ -15,14 +15,15 @@ public partial class TabStripWindow : ClickThroughWindow
 
     public bool HasTabs { get; private set; }
 
-    public double Apply(AppSettings settings, Preset preset, int activeIndex, int presetCount)
+    public double Apply(AppSettings settings, double zoom, Preset preset, int activeIndex, int presetCount)
     {
         var strip = settings.TabStrip;
-        var text = FrozenBrush(ParseColor(strip.TextColor, Color.FromRgb(0xF0, 0xE6, 0xD2)));
-        var accent = FrozenBrush(ParseColor(strip.AccentColor, Color.FromRgb(0xE0, 0xA0, 0x40)));
+        var text = FrozenBrush(ParseColor(strip.TextColor, DefaultTextColor));
+        var accent = FrozenBrush(ParseColor(strip.AccentColor, DefaultAccentColor));
         var inactive = FrozenBrush(Color.FromArgb(0x26, 0xFF, 0xFF, 0xFF));
         var fontSize = strip.FontSize;
-        var scale = settings.Scale * strip.Scale;
+        var overlayScale = settings.Scale * zoom;
+        var scale = overlayScale * strip.Scale;
 
         RootScale.ScaleX = scale;
         RootScale.ScaleY = scale;
@@ -54,7 +55,7 @@ public partial class TabStripWindow : ClickThroughWindow
         PageCounter.FontSize = fontSize;
         PageCounter.Foreground = text;
 
-        Width = strip.Detached ? strip.Width * scale : settings.Width * settings.Scale;
+        Width = strip.Detached ? strip.Width * scale : settings.Width * overlayScale;
         RootGrid.Measure(new Size(Width, double.PositiveInfinity));
         Height = Math.Ceiling(RootGrid.DesiredSize.Height);
 

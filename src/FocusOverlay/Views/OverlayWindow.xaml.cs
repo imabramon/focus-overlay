@@ -20,27 +20,27 @@ public partial class OverlayWindow : ClickThroughWindow
         InitializeComponent();
     }
 
-    public void Apply(AppSettings settings, Preset preset, OverlayPage? page, double minOffsetY)
+    public void Apply(TabView view, Preset preset, OverlayPage? page, double minOffsetY)
     {
-        var textColor = TextColorOf(settings);
-        var accentColor = AccentColorOf(settings);
-        var offsetY = Math.Max(settings.OffsetY, minOffsetY);
-        var shift = offsetY - settings.OffsetY;
+        var textColor = ParseColor(view.TextColor, DefaultTextColor);
+        var accentColor = ParseColor(view.AccentColor, DefaultAccentColor);
+        var offsetY = Math.Max(view.OffsetY, minOffsetY);
+        var shift = offsetY - view.OffsetY;
 
-        RootScale.ScaleX = settings.Scale;
-        RootScale.ScaleY = settings.Scale;
-        Width = settings.Width * settings.Scale;
-        Height = Math.Max(MinContentHeight, settings.Height * settings.Scale - shift);
-        FrameBorder.Background = BackgroundOf(settings);
+        RootScale.ScaleX = view.Scale;
+        RootScale.ScaleY = view.Scale;
+        Width = view.Width * view.Scale;
+        Height = Math.Max(MinContentHeight, view.Height * view.Scale - shift);
+        FrameBorder.Background = FrozenBrush(Color.FromArgb((byte)(view.BackgroundOpacity * 255), 0, 0, 0));
 
         var theme = new MarkdownTheme(
-            settings.FontSize,
+            view.FontSize,
             FrozenBrush(textColor),
             FrozenBrush(accentColor),
             FrozenBrush(WithAlpha(textColor, 0.7)),
             FrozenBrush(Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF)),
             FrozenBrush(WithAlpha(accentColor, 0.4)),
-            Math.Max(32, settings.Width - 30),
+            Math.Max(32, view.Width - 30),
             source => StateStore.ResolveAsset(preset, source));
 
         var samePage = ReferenceEquals(page, _renderedPage);
@@ -51,7 +51,7 @@ public partial class OverlayWindow : ClickThroughWindow
         DocumentViewer.Document = MarkdownRenderer.Render(markdown, theme);
         Dispatcher.InvokeAsync(() => GetScroll()?.ScrollToVerticalOffset(offset), DispatcherPriority.Loaded);
 
-        PlaceInCorner(settings.Corner, settings.OffsetX, offsetY);
+        PlaceInCorner(view.Corner, view.OffsetX, offsetY);
     }
 
     public void ScrollBy(double delta)

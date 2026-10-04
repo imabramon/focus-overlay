@@ -21,6 +21,12 @@ public sealed class HotkeySettings
     public string ScrollDown { get; set; } = "Ctrl+Alt+Down";
     public string NextPreset { get; set; } = "Ctrl+Alt+P";
     public string PrevPreset { get; set; } = string.Empty;
+    public string MoveTop { get; set; } = "Ctrl+Alt+Z";
+    public string MoveLeft { get; set; } = "Ctrl+Alt+X";
+    public string MoveCenter { get; set; } = "Ctrl+Alt+C";
+    public string MoveRight { get; set; } = "Ctrl+Alt+V";
+    public string MoveBottom { get; set; } = "Ctrl+Alt+B";
+    public string ResetUserView { get; set; } = "Ctrl+Alt+R";
 }
 
 public sealed class TabStripSettings

@@ -18,25 +18,39 @@ public static class PageDisplaySettings
     public static bool IsSettingsBlock(FencedCodeBlock block) =>
         string.Equals(block.Info?.Trim(), Language, StringComparison.OrdinalIgnoreCase);
 
-    public static AppSettings Resolve(AppSettings settings, string? markdown)
+    public static TabViewSetting Parse(string? markdown)
     {
-        var effective = settings.CloneDisplay();
+        var setting = new TabViewSetting();
         foreach (var (_, text) in EnumerateLines(markdown))
         {
-            ApplyLine(effective, settings, text);
+            ApplyLine(setting, text);
         }
 
-        return effective;
+        return setting;
     }
 
     public static IReadOnlyList<MarkdownIssue> Validate(string? markdown)
     {
-        var probe = new AppSettings();
+        var probe = new TabViewSetting();
         return EnumerateLines(markdown)
-            .Select(line => (line.Line, Error: ApplyLine(probe, probe, line.Text)))
+            .Select(line => (line.Line, Error: ApplyLine(probe, line.Text)))
             .Where(line => line.Error != null)
             .Select(line => new MarkdownIssue(line.Line, $"{Language}: {line.Error}"))
             .ToList();
+    }
+
+    public static IReadOnlyList<MarkdownIssue> ValidateSystem(string? markdown)
+    {
+        if (string.IsNullOrWhiteSpace(markdown))
+        {
+            return [];
+        }
+
+        var extra = Markdown.Parse(markdown, _pipeline)
+            .Where(block => !(block is FencedCodeBlock fenced && IsSettingsBlock(fenced)))
+            .Select(block => new MarkdownIssue(block.Line, $"в system.md учитываются только блоки ```{Language}, остальное игнорируется"));
+
+        return extra.Concat(Validate(markdown)).OrderBy(issue => issue.Line).ToList();
     }
 
     private static IEnumerable<(int Line, string Text)> EnumerateLines(string? markdown)
@@ -54,7 +68,7 @@ public static class PageDisplaySettings
             .ToList();
     }
 
-    private static string? ApplyLine(AppSettings target, AppSettings global, string line)
+    private static string? ApplyLine(TabViewSetting target, string line)
     {
         var text = line.Trim();
         if (text.Length == 0 || text.StartsWith('#') || text.StartsWith("//"))
@@ -106,7 +120,7 @@ public static class PageDisplaySettings
                     return Invalid(name, value, "число пикселей");
                 }
 
-                target.Width = Math.Max(150, width);
+                target.Width = width;
                 return null;
             case "height":
                 if (!TryParseNumber(value, out var height))
@@ -114,7 +128,7 @@ public static class PageDisplaySettings
                     return Invalid(name, value, "число пикселей");
                 }
 
-                target.Height = Math.Max(100, height);
+                target.Height = height;
                 return null;
             case "scale":
             case "zoom":
@@ -123,7 +137,7 @@ public static class PageDisplaySettings
                     return Invalid(name, value, "число больше 0, например 1.2");
                 }
 
-                target.Scale = Math.Clamp(global.Scale * scale, 0.25, 5);
+                target.Scale = scale;
                 return null;
             case "fontsize":
             case "font":
@@ -132,7 +146,7 @@ public static class PageDisplaySettings
                     return Invalid(name, value, "число от 6 до 48");
                 }
 
-                target.FontSize = Math.Clamp(fontSize, 6, 48);
+                target.FontSize = fontSize;
                 return null;
             case "opacity":
             case "background":

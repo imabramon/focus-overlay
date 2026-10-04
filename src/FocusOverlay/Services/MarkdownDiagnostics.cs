@@ -48,6 +48,8 @@ public static class MarkdownDiagnostics
         return issues.OrderBy(issue => issue.Line).ToList();
     }
 
+    public static IReadOnlyList<MarkdownIssue> AnalyzeSystem(string? markdown) => PageDisplaySettings.ValidateSystem(markdown);
+
     private static string? CheckImage(Preset preset, string? url)
     {
         if (string.IsNullOrWhiteSpace(url))

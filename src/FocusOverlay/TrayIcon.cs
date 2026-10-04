@@ -21,6 +21,7 @@ public sealed class TrayIcon : IDisposable
         menu.Items.Add("Редактор…", null, (_, _) => _controller.OpenEditor());
         menu.Items.Add("Настройки…", null, (_, _) => _controller.OpenSettings());
         menu.Items.Add(_presetsMenu);
+        menu.Items.Add("Сбросить положение и масштаб", null, (_, _) => _controller.ResetUserSetting());
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Импорт пресета…", null, (_, _) => _controller.ImportPreset(null));
         menu.Items.Add("Импорт папки с .md…", null, (_, _) => _controller.ImportPresetFolder(null));

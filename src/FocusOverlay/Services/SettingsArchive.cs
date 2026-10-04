@@ -77,6 +77,12 @@ public static class SettingsArchive
         ScrollDown = source.ScrollDown,
         NextPreset = source.NextPreset,
         PrevPreset = source.PrevPreset,
+        MoveTop = source.MoveTop,
+        MoveLeft = source.MoveLeft,
+        MoveCenter = source.MoveCenter,
+        MoveRight = source.MoveRight,
+        MoveBottom = source.MoveBottom,
+        ResetUserView = source.ResetUserView,
     };
 
     private sealed class SettingsFile

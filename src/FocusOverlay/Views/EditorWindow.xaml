@@ -45,6 +45,10 @@
             </Grid.ColumnDefinitions>
 
             <DockPanel Grid.Column="0">
+                <ToggleButton x:Name="SystemToggle" DockPanel.Dock="Top" Margin="0,0,0,6" Padding="10,3"
+                              Content="⚙ system.md — настройки пресета"
+                              ToolTip="Блок ```focus-overlay для всего пресета. Вкладка не показывается на оверлее."
+                              Checked="OnSystemToggled" Unchecked="OnSystemToggled" />
                 <UniformGrid DockPanel.Dock="Bottom" Columns="4" Margin="0,6,0,0">
                     <Button Content="+" ToolTip="Добавить вкладку" Margin="0" Click="OnAddPageClick" />
                     <Button Content="−" ToolTip="Удалить вкладку" Margin="4,0,0,0" Click="OnRemovePageClick" />
@@ -54,28 +58,44 @@
                 <ListBox x:Name="PageList" DisplayMemberPath="Title" SelectionChanged="OnPageSelectionChanged" />
             </DockPanel>
 
-            <DockPanel x:Name="PageEditor" Grid.Column="2"
-                       DataContext="{Binding SelectedItem, ElementName=PageList}">
-                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                    <Button DockPanel.Dock="Right" Content="Изображение…" Click="OnInsertImageClick" />
-                    <TextBlock Text="Заголовок:" Style="{StaticResource FieldLabel}" />
-                    <TextBox VerticalContentAlignment="Center"
-                             Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
-                </DockPanel>
+            <DockPanel Grid.Column="2">
                 <TextBlock DockPanel.Dock="Bottom" Margin="0,4,0,0" Foreground="Gray" TextWrapping="Wrap"
                            Text="Markdown: **жирный**, *курсив*, ==выделение==, - [ ] задачи, таблицы. Картинка с размером: ![имя|32](файл.png) — без пробелов в пути (пробел → %20) — или ![[файл с пробелами.png]] (без размера), Ctrl+V вставляет из буфера. Параметры таблицы: {widths=&quot;120,1*&quot; borders=rows} через пустую строку над ней. Вид вкладки: блок ```focus-overlay. Полное описание: docs/markup.md в репозитории." />
                 <ListBox x:Name="IssueList" DockPanel.Dock="Bottom" Margin="0,4,0,0" MaxHeight="110"
                          Foreground="#B00020" DisplayMemberPath="Text" Visibility="Collapsed"
                          ToolTip="Двойной клик — перейти к строке"
                          MouseDoubleClick="OnIssueDoubleClick" />
-                <TextBox x:Name="ContentBox"
-                         Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
-                         AcceptsReturn="True"
-                         AcceptsTab="True"
-                         TextWrapping="Wrap"
-                         VerticalScrollBarVisibility="Auto"
-                         FontFamily="Consolas"
-                         FontSize="13" />
+                <Grid>
+                    <DockPanel x:Name="PageEditor"
+                               DataContext="{Binding SelectedItem, ElementName=PageList}">
+                        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                            <Button DockPanel.Dock="Right" Content="Изображение…" Click="OnInsertImageClick" />
+                            <TextBlock Text="Заголовок:" Style="{StaticResource FieldLabel}" />
+                            <TextBox VerticalContentAlignment="Center"
+                                     Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <TextBox x:Name="ContentBox"
+                                 Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True"
+                                 AcceptsTab="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas"
+                                 FontSize="13" />
+                    </DockPanel>
+                    <DockPanel x:Name="SystemEditor" Visibility="Collapsed">
+                        <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" TextWrapping="Wrap"
+                                   Text="system.md — вид оверлея для всего пресета. Учитываются только блоки ```focus-overlay с теми же параметрами, что и во вкладках. Порядок: настройки приложения → system.md → блок вкладки → изменения с клавиш." />
+                        <TextBox x:Name="SystemBox"
+                                 Text="{Binding SystemContent, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True"
+                                 AcceptsTab="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas"
+                                 FontSize="13" />
+                    </DockPanel>
+                </Grid>
             </DockPanel>
         </Grid>
     </DockPanel>

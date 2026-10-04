@@ -7,12 +7,14 @@ public sealed class AppState
 {
     public AppSettings Settings { get; set; } = new();
     public ObservableCollection<Preset> Presets { get; set; } = new();
+    public TabViewSetting UserSetting { get; set; } = new();
 
     public Preset ActivePreset => Presets[Settings.ActivePresetIndex];
 
     public void Normalize()
     {
         Settings ??= new AppSettings();
+        UserSetting ??= new TabViewSetting();
         Settings.Hotkeys ??= new HotkeySettings();
         Settings.Hotkeys.NextPreset ??= string.Empty;
         Settings.Hotkeys.PrevPreset ??= string.Empty;
@@ -27,6 +29,7 @@ public sealed class AppState
         foreach (var preset in Presets)
         {
             preset.Pages ??= new ObservableCollection<OverlayPage>();
+            preset.SystemContent ??= string.Empty;
             if (string.IsNullOrWhiteSpace(preset.Id))
             {
                 preset.Id = Guid.NewGuid().ToString("N");

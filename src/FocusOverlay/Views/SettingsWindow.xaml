@@ -218,6 +218,7 @@
             </TabItem>
 
             <TabItem Header="Горячие клавиши">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="10">
                     <Grid x:Name="HotkeysGrid">
                         <Grid.ColumnDefinitions>
@@ -229,6 +230,7 @@
                                Text="Кликните в поле и нажмите сочетание. Backspace — очистить, Esc — отмена." />
                     <TextBlock x:Name="HotkeyStatus" Margin="0,6,0,0" Foreground="Firebrick" TextWrapping="Wrap" />
                 </StackPanel>
+                </ScrollViewer>
             </TabItem>
         </TabControl>
     </DockPanel>

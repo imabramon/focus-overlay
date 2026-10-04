@@ -140,6 +140,12 @@ public partial class SettingsWindow : Window
             ("Прокрутка вниз", () => hotkeys.ScrollDown, value => hotkeys.ScrollDown = value),
             ("Следующий пресет", () => hotkeys.NextPreset, value => hotkeys.NextPreset = value),
             ("Предыдущий пресет", () => hotkeys.PrevPreset, value => hotkeys.PrevPreset = value),
+            ("Оверлей вверх", () => hotkeys.MoveTop, value => hotkeys.MoveTop = value),
+            ("Оверлей вниз", () => hotkeys.MoveBottom, value => hotkeys.MoveBottom = value),
+            ("Оверлей влево", () => hotkeys.MoveLeft, value => hotkeys.MoveLeft = value),
+            ("Оверлей по центру", () => hotkeys.MoveCenter, value => hotkeys.MoveCenter = value),
+            ("Оверлей вправо", () => hotkeys.MoveRight, value => hotkeys.MoveRight = value),
+            ("Сбросить положение и масштаб", () => hotkeys.ResetUserView, value => hotkeys.ResetUserView = value),
         };
 
         foreach (var (label, get, set) in rows)
