@@ -33,6 +33,9 @@ public partial class OverlayWindow : ClickThroughWindow
         Width = view.Width * view.Scale;
         Height = Math.Max(MinContentHeight, view.Height * view.Scale - shift);
         FrameBorder.Background = FrozenBrush(Color.FromArgb((byte)(view.BackgroundOpacity * 255), 0, 0, 0));
+        FrameBorder.VerticalAlignment = view.Corner is OverlayCorner.BottomLeft or OverlayCorner.BottomRight or OverlayCorner.BottomCenter
+            ? VerticalAlignment.Bottom
+            : VerticalAlignment.Stretch;
 
         var theme = new MarkdownTheme(
             view.FontSize,
