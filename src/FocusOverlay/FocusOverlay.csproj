@@ -22,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\docs\markup.md" LogicalName="FocusOverlay.Docs.markup.md" Link="Docs\markup.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Markdig" Version="0.37.0" />
   </ItemGroup>
 

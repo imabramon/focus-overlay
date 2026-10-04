@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using FocusOverlay.Models;
@@ -19,7 +20,11 @@ public partial class EditorWindow : Window
 {
     private readonly OverlayController _controller;
     private readonly DispatcherTimer _issuesTimer = new() { Interval = TimeSpan.FromMilliseconds(300) };
+    private OverlayPage? _page;
+    private Preset? _systemPreset;
+    private MarkupHelpWindow? _helpWindow;
     private bool _syncing;
+    private bool _loading;
 
     public EditorWindow(OverlayController controller)
     {
@@ -47,12 +52,21 @@ public partial class EditorWindow : Window
         {
             _controller.ActiveChanged -= SyncSelection;
             _issuesTimer.Stop();
+            _helpWindow?.Close();
         };
     }
 
     private Preset ActivePreset => _controller.State.ActivePreset;
 
     private void OnAnyChange(object sender, RoutedEventArgs e)
+    {
+        if (!_loading)
+        {
+            ScheduleUpdate();
+        }
+    }
+
+    private void ScheduleUpdate()
     {
         _controller.ScheduleRefresh();
         _issuesTimer.Stop();
@@ -61,26 +75,129 @@ public partial class EditorWindow : Window
 
     private bool IsSystemMode => SystemToggle.IsChecked == true;
 
-    private void UpdateIssues()
+    private void LoadPage()
     {
-        var issues = IsSystemMode ? MarkdownDiagnostics.AnalyzeSystem(ActivePreset.SystemContent)
-            : PageList.SelectedItem is OverlayPage page ? MarkdownDiagnostics.Analyze(ActivePreset, page.Content)
-            : Array.Empty<MarkdownIssue>();
-        IssueList.ItemsSource = issues;
-        IssueList.Visibility = issues.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        _page = PageList.SelectedItem as OverlayPage;
+        var (entries, body) = PageDisplaySettings.Split(_page?.Content);
+
+        _loading = true;
+        try
+        {
+            ContentBox.Text = body;
+            PageSettingsForm.Load(entries);
+            PageSettingsExpander.IsExpanded = entries.Count > 0;
+        }
+        finally
+        {
+            _loading = false;
+        }
     }
 
-    private void OnIssueDoubleClick(object sender, MouseButtonEventArgs e)
+    private void LoadSystem()
     {
-        if (IssueList.SelectedItem is not MarkdownIssue issue)
+        _systemPreset = ActivePreset;
+        SystemSettingsForm.Load(PageDisplaySettings.Split(_systemPreset.SystemContent).Entries);
+    }
+
+    private void OnContentTextChanged(object sender, TextChangedEventArgs e) => SavePage();
+
+    private void OnPageSettingsChanged(object? sender, EventArgs e)
+    {
+        SavePage();
+        ScheduleUpdate();
+    }
+
+    private void SavePage()
+    {
+        if (!_loading && _page != null)
+        {
+            _page.Content = PageDisplaySettings.Compose(PageSettingsForm.Entries, ContentBox.Text);
+        }
+    }
+
+    private void OnSystemSettingsChanged(object? sender, EventArgs e)
+    {
+        if (_systemPreset == null)
         {
             return;
         }
 
-        var box = IsSystemMode ? SystemBox : ContentBox;
+        _systemPreset.SystemContent = PageDisplaySettings.Compose(SystemSettingsForm.Entries, string.Empty);
+        ScheduleUpdate();
+    }
+
+    private void UpdateIssues()
+    {
+        var issues = new List<EditorIssue>();
+        if (IsSystemMode)
+        {
+            issues.AddRange(FormIssues(SystemSettingsForm, null));
+        }
+        else if (_page != null)
+        {
+            issues.AddRange(FormIssues(PageSettingsForm, PageSettingsExpander));
+            issues.AddRange(MarkdownDiagnostics.Analyze(ActivePreset, ContentBox.Text)
+                .Select(issue => new EditorIssue(issue.Text, () => SelectLine(issue.Line))));
+        }
+
+        IssueList.ItemsSource = issues;
+        IssueCount.Text = issues.Count.ToString();
+        IssuesButton.Foreground = issues.Count > 0 ? Brushes.Firebrick : Brushes.Gray;
+        NoIssuesText.Visibility = issues.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    private static IEnumerable<EditorIssue> FormIssues(TabSettingsForm form, Expander? expander) =>
+        form.Errors.Select(error => new EditorIssue(error.Value, () =>
+        {
+            if (expander != null)
+            {
+                expander.IsExpanded = true;
+            }
+
+            form.FocusField(error.Key);
+        }));
+
+    private void OnIssuesToggled(object sender, RoutedEventArgs e)
+    {
+        var open = IssuesButton.IsChecked == true;
+        IssuesPanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        IssuesColumn.Width = open ? new GridLength(280) : new GridLength(0);
+    }
+
+    private void OnIssuesCloseClick(object sender, RoutedEventArgs e) => IssuesButton.IsChecked = false;
+
+    private void OnIssueClick(object sender, MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource is DependencyObject source
+            && ItemsControl.ContainerFromElement(IssueList, source) is ListBoxItem { DataContext: EditorIssue issue })
+        {
+            issue.Navigate();
+        }
+    }
+
+    private void OnHelpClick(object sender, RoutedEventArgs e)
+    {
+        if (_helpWindow == null)
+        {
+            _helpWindow = new MarkupHelpWindow { Owner = this };
+            _helpWindow.Closed += (_, _) => _helpWindow = null;
+            _helpWindow.Show();
+        }
+
+        if (_helpWindow.WindowState == WindowState.Minimized)
+        {
+            _helpWindow.WindowState = WindowState.Normal;
+        }
+
+        _helpWindow.Activate();
+    }
+
+    private void SelectLine(int lineIndex)
+    {
+        var box = ContentBox;
         var text = box.Text;
         var start = 0;
-        for (var line = 0; line < issue.Line; line++)
+        for (var line = 0; line < lineIndex; line++)
         {
             var next = text.IndexOf('\n', start);
             if (next < 0)
@@ -120,11 +237,20 @@ public partial class EditorWindow : Window
             PageList.SelectedIndex = preset.Pages.Count > 0 ? _controller.Settings.ActivePageIndex : -1;
             PageList.ScrollIntoView(PageList.SelectedItem);
             PageEditor.IsEnabled = PageList.SelectedItem != null;
-            SystemEditor.DataContext = preset;
         }
         finally
         {
             _syncing = false;
+        }
+
+        if (!ReferenceEquals(PageList.SelectedItem, _page))
+        {
+            LoadPage();
+        }
+
+        if (!ReferenceEquals(ActivePreset, _systemPreset))
+        {
+            LoadSystem();
         }
 
         UpdateIssues();
@@ -141,6 +267,12 @@ public partial class EditorWindow : Window
     private void OnPageSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         PageEditor.IsEnabled = PageList.SelectedItem != null;
+        if (!ReferenceEquals(PageList.SelectedItem, _page))
+        {
+            LoadPage();
+            UpdateIssues();
+        }
+
         if (!_syncing && PageList.SelectedIndex >= 0)
         {
             SystemToggle.IsChecked = false;
@@ -187,11 +319,21 @@ public partial class EditorWindow : Window
         _controller.SelectPreset(Math.Min(index, presets.Count - 1));
     }
 
-    private void OnImportClick(object sender, RoutedEventArgs e) => _controller.ImportPreset(this);
+    private void OnImportClick(object sender, RoutedEventArgs e)
+    {
+        var menu = ImportButton.ContextMenu!;
+        menu.PlacementTarget = ImportButton;
+        menu.Placement = PlacementMode.Bottom;
+        menu.IsOpen = true;
+    }
+
+    private void OnImportArchiveClick(object sender, RoutedEventArgs e) => _controller.ImportPreset(this);
 
     private void OnImportFolderClick(object sender, RoutedEventArgs e) => _controller.ImportPresetFolder(this);
 
     private void OnExportClick(object sender, RoutedEventArgs e) => _controller.ExportPreset(ActivePreset, this);
+
+    private void OnDataClick(object sender, RoutedEventArgs e) => _controller.OpenDataFolder(ActivePreset, this);
 
     private void OnSettingsClick(object sender, RoutedEventArgs e) => _controller.OpenSettings();
 
@@ -362,4 +504,6 @@ public partial class EditorWindow : Window
 
     private bool Confirm(string message) =>
         MessageBox.Show(this, message, Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+
+    public sealed record EditorIssue(string Text, Action Navigate);
 }

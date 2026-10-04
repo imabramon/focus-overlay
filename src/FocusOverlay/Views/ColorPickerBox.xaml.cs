@@ -71,6 +71,11 @@ public partial class ColorPickerBox : UserControl
         PopupHexBox.Text = ColorText;
         _updating = false;
         UpdateVisuals();
+
+        if (string.IsNullOrWhiteSpace(ColorText))
+        {
+            SwatchFill.Background = null;
+        }
     }
 
     private void OnHexTextChanged(object sender, TextChangedEventArgs e)

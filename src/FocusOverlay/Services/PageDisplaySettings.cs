@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Windows.Media;
 using FocusOverlay.Models;
 using FocusOverlay.Properties;
@@ -13,6 +14,17 @@ namespace FocusOverlay.Services;
 public static class PageDisplaySettings
 {
     public const string Language = "focus-overlay";
+
+    public const string KeyCorner = "corner";
+    public const string KeyOffsetX = "offset-x";
+    public const string KeyOffsetY = "offset-y";
+    public const string KeyWidth = "width";
+    public const string KeyHeight = "height";
+    public const string KeyScale = "scale";
+    public const string KeyFontSize = "font-size";
+    public const string KeyOpacity = "opacity";
+    public const string KeyTextColor = "text-color";
+    public const string KeyAccentColor = "accent-color";
 
     private static readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder().Build();
 
@@ -69,27 +81,126 @@ public static class PageDisplaySettings
             .ToList();
     }
 
+    public static string? ValidateValue(string key, string value) =>
+        ApplyValue(new TabViewSetting(), key, key, value.Trim());
+
+    public static (IReadOnlyDictionary<string, string> Entries, string Body) Split(string? markdown)
+    {
+        var entries = new Dictionary<string, string>();
+        if (string.IsNullOrEmpty(markdown) || !markdown.Contains(Language, StringComparison.OrdinalIgnoreCase))
+        {
+            return (entries, markdown ?? string.Empty);
+        }
+
+        var blocks = Markdown.Parse(markdown, _pipeline)
+            .Descendants<FencedCodeBlock>()
+            .Where(IsSettingsBlock)
+            .ToList();
+
+        foreach (var line in blocks.SelectMany(block => block.Lines.Lines.Take(block.Lines.Count)))
+        {
+            var text = line.Slice.ToString().Trim();
+            if (!IsComment(text) && TrySplitLine(text, out var name, out var value) && CanonicalKey(name) is { } key)
+            {
+                entries[key] = key == KeyCorner && TryParseCorner(value, out var corner) ? CornerName(corner) : value;
+            }
+        }
+
+        var body = new StringBuilder(markdown);
+        foreach (var block in blocks.OrderByDescending(block => block.Span.Start))
+        {
+            var end = Math.Min(block.Span.End + 1, body.Length);
+            while (end < body.Length && body[end] is '\r' or '\n')
+            {
+                end++;
+            }
+
+            body.Remove(block.Span.Start, end - block.Span.Start);
+        }
+
+        return (entries, body.ToString());
+    }
+
+    public static string Compose(IEnumerable<KeyValuePair<string, string>> entries, string body)
+    {
+        var lines = entries
+            .Where(entry => !string.IsNullOrWhiteSpace(entry.Value))
+            .Select(entry => $"{entry.Key}: {entry.Value.Trim()}")
+            .ToList();
+
+        if (lines.Count == 0)
+        {
+            return body;
+        }
+
+        var newLine = Environment.NewLine;
+        var block = $"```{Language}{newLine}{string.Join(newLine, lines)}{newLine}```";
+        return string.IsNullOrEmpty(body) ? block : block + newLine + newLine + body;
+    }
+
+    public static string CornerName(OverlayCorner corner) => corner switch
+    {
+        OverlayCorner.TopLeft => "top-left",
+        OverlayCorner.TopCenter => "top-center",
+        OverlayCorner.TopRight => "top-right",
+        OverlayCorner.BottomLeft => "bottom-left",
+        OverlayCorner.BottomCenter => "bottom-center",
+        _ => "bottom-right",
+    };
+
     private static string? ApplyLine(TabViewSetting target, string line)
     {
         var text = line.Trim();
-        if (text.Length == 0 || text.StartsWith('#') || text.StartsWith("//"))
+        if (IsComment(text))
         {
             return null;
         }
 
-        var separator = text.IndexOfAny([':', '=']);
-        if (separator <= 0)
+        if (!TrySplitLine(text, out var name, out var value))
         {
             return string.Format(Strings.DiagNotKeyValue, text);
         }
 
-        var name = text[..separator].Trim();
-        var value = text[(separator + 1)..].Trim().Trim('"', '\'');
+        var key = CanonicalKey(name);
+        return key == null ? string.Format(Strings.DiagUnknownParameter, name) : ApplyValue(target, key, name, value);
+    }
 
-        switch (NormalizeKey(name))
+    private static bool IsComment(string text) => text.Length == 0 || text.StartsWith('#') || text.StartsWith("//");
+
+    private static bool TrySplitLine(string text, out string name, out string value)
+    {
+        var separator = text.IndexOfAny([':', '=']);
+        if (separator <= 0)
         {
-            case "corner":
-            case "position":
+            name = value = string.Empty;
+            return false;
+        }
+
+        name = text[..separator].Trim();
+        value = text[(separator + 1)..].Trim().Trim('"', '\'');
+        return true;
+    }
+
+    private static string? CanonicalKey(string name) => NormalizeKey(name) switch
+    {
+        "corner" or "position" => KeyCorner,
+        "offsetx" or "x" => KeyOffsetX,
+        "offsety" or "y" => KeyOffsetY,
+        "width" => KeyWidth,
+        "height" => KeyHeight,
+        "scale" or "zoom" => KeyScale,
+        "fontsize" or "font" => KeyFontSize,
+        "opacity" or "background" or "backgroundopacity" => KeyOpacity,
+        "textcolor" or "color" or "text" => KeyTextColor,
+        "accentcolor" or "accent" => KeyAccentColor,
+        _ => null,
+    };
+
+    private static string? ApplyValue(TabViewSetting target, string key, string name, string value)
+    {
+        switch (key)
+        {
+            case KeyCorner:
                 if (!TryParseCorner(value, out var corner))
                 {
                     return Invalid(name, value, Strings.DiagExpectedCorner);
@@ -97,8 +208,7 @@ public static class PageDisplaySettings
 
                 target.Corner = corner;
                 return null;
-            case "offsetx":
-            case "x":
+            case KeyOffsetX:
                 if (!TryParseNumber(value, out var offsetX))
                 {
                     return Invalid(name, value, Strings.DiagExpectedPixels);
@@ -106,8 +216,7 @@ public static class PageDisplaySettings
 
                 target.OffsetX = offsetX;
                 return null;
-            case "offsety":
-            case "y":
+            case KeyOffsetY:
                 if (!TryParseNumber(value, out var offsetY))
                 {
                     return Invalid(name, value, Strings.DiagExpectedPixels);
@@ -115,7 +224,7 @@ public static class PageDisplaySettings
 
                 target.OffsetY = offsetY;
                 return null;
-            case "width":
+            case KeyWidth:
                 if (!TryParseNumber(value, out var width))
                 {
                     return Invalid(name, value, Strings.DiagExpectedPixels);
@@ -123,7 +232,7 @@ public static class PageDisplaySettings
 
                 target.Width = width;
                 return null;
-            case "height":
+            case KeyHeight:
                 if (!TryParseNumber(value, out var height))
                 {
                     return Invalid(name, value, Strings.DiagExpectedPixels);
@@ -131,8 +240,7 @@ public static class PageDisplaySettings
 
                 target.Height = height;
                 return null;
-            case "scale":
-            case "zoom":
+            case KeyScale:
                 if (!TryParseNumber(value, out var scale) || scale <= 0)
                 {
                     return Invalid(name, value, Strings.DiagExpectedPositive);
@@ -140,8 +248,7 @@ public static class PageDisplaySettings
 
                 target.Scale = scale;
                 return null;
-            case "fontsize":
-            case "font":
+            case KeyFontSize:
                 if (!TryParseNumber(value, out var fontSize))
                 {
                     return Invalid(name, value, Strings.DiagExpectedFontSize);
@@ -149,9 +256,7 @@ public static class PageDisplaySettings
 
                 target.FontSize = fontSize;
                 return null;
-            case "opacity":
-            case "background":
-            case "backgroundopacity":
+            case KeyOpacity:
                 if (!TryParseOpacity(value, out var opacity))
                 {
                     return Invalid(name, value, Strings.DiagExpectedOpacity);
@@ -159,9 +264,7 @@ public static class PageDisplaySettings
 
                 target.BackgroundOpacity = opacity;
                 return null;
-            case "textcolor":
-            case "color":
-            case "text":
+            case KeyTextColor:
                 if (!IsColor(value))
                 {
                     return Invalid(name, value, Strings.DiagExpectedColor);
@@ -169,8 +272,7 @@ public static class PageDisplaySettings
 
                 target.TextColor = value;
                 return null;
-            case "accentcolor":
-            case "accent":
+            case KeyAccentColor:
                 if (!IsColor(value))
                 {
                     return Invalid(name, value, Strings.DiagExpectedColor);

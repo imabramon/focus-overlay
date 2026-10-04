@@ -712,15 +712,6 @@ namespace FocusOverlay.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Markdown: **bold**, *italic*, ==highlight==, - [ ] tasks,....
-        /// </summary>
-        public static string EditorMarkdownHint {
-            get {
-                return ResourceManager.GetString("EditorMarkdownHint", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Move down.
         /// </summary>
         public static string EditorMoveDown {
@@ -1473,6 +1464,141 @@ namespace FocusOverlay.Properties {
         public static string WindowTitleTabStrip {
             get {
                 return ResourceManager.GetString("WindowTitleTabStrip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Import ▾.
+        /// </summary>
+        public static string EditorImportMenu {
+            get {
+                return ResourceManager.GetString("EditorImportMenu", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Preset archive….
+        /// </summary>
+        public static string EditorImportArchive {
+            get {
+                return ResourceManager.GetString("EditorImportArchive", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Data.
+        /// </summary>
+        public static string EditorData {
+            get {
+                return ResourceManager.GetString("EditorData", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Open the folder with preset files.
+        /// </summary>
+        public static string EditorDataTooltip {
+            get {
+                return ResourceManager.GetString("EditorDataTooltip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Tab settings.
+        /// </summary>
+        public static string EditorPageSettings {
+            get {
+                return ResourceManager.GetString("EditorPageSettings", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Empty field — the value is taken from the preset and app set...
+        /// </summary>
+        public static string EditorPageSettingsHint {
+            get {
+                return ResourceManager.GetString("EditorPageSettingsHint", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Inherited.
+        /// </summary>
+        public static string EditorInherited {
+            get {
+                return ResourceManager.GetString("EditorInherited", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string EditorClearValue {
+            get {
+                return ResourceManager.GetString("EditorClearValue", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Multiplier to the scale of previous levels: 1.2 — 20% larger.
+        /// </summary>
+        public static string EditorScaleTooltip {
+            get {
+                return ResourceManager.GetString("EditorScaleTooltip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to 0.5 or 50%.
+        /// </summary>
+        public static string EditorOpacityTooltip {
+            get {
+                return ResourceManager.GetString("EditorOpacityTooltip", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Errors.
+        /// </summary>
+        public static string EditorIssuesTitle {
+            get {
+                return ResourceManager.GetString("EditorIssuesTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to No errors.
+        /// </summary>
+        public static string EditorNoIssues {
+            get {
+                return ResourceManager.GetString("EditorNoIssues", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Markup reference.
+        /// </summary>
+        public static string EditorMarkupHelp {
+            get {
+                return ResourceManager.GetString("EditorMarkupHelp", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Focus Overlay — markup.
+        /// </summary>
+        public static string WindowTitleMarkup {
+            get {
+                return ResourceManager.GetString("WindowTitleMarkup", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to open the data folder: {0}.
+        /// </summary>
+        public static string ControllerOpenDataFailed {
+            get {
+                return ResourceManager.GetString("ControllerOpenDataFailed", resourceCulture);
             }
         }
     }

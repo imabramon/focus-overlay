@@ -226,7 +226,7 @@
     <value>Удалить</value>
   </data>
   <data name="EditorImportFolder" xml:space="preserve">
-    <value>Импорт папки…</value>
+    <value>Папка с .md…</value>
   </data>
   <data name="EditorPresetLabel" xml:space="preserve">
     <value>Пресет:</value>
@@ -238,7 +238,7 @@
     <value>⚙ system.md — настройки пресета</value>
   </data>
   <data name="EditorSystemTabTooltip" xml:space="preserve">
-    <value>Блок ```focus-overlay для всего пресета. Вкладка не показывается на оверлее.</value>
+    <value>Настройки вида для всего пресета. Вкладка не показывается на оверлее.</value>
   </data>
   <data name="EditorAddPage" xml:space="preserve">
     <value>Добавить вкладку</value>
@@ -252,11 +252,8 @@
   <data name="EditorMoveDown" xml:space="preserve">
     <value>Ниже</value>
   </data>
-  <data name="EditorMarkdownHint" xml:space="preserve">
-    <value>Markdown: **жирный**, *курсив*, ==выделение==, - [ ] задачи, таблицы. Картинка с размером: ![имя|32](файл.png) — без пробелов в пути (пробел → %20) — или ![[файл с пробелами.png]] (без размера), Ctrl+V вставляет из буфера. Параметры таблицы: {widths="120,1*" borders=rows} через пустую строку над ней. Вид вкладки: блок ```focus-overlay. Полное описание: docs/markup.md в репозитории.</value>
-  </data>
   <data name="EditorIssuesTooltip" xml:space="preserve">
-    <value>Двойной клик — перейти к строке</value>
+    <value>Ошибки разметки — нажмите, чтобы показать список</value>
   </data>
   <data name="EditorInsertImage" xml:space="preserve">
     <value>Изображение…</value>
@@ -265,7 +262,7 @@
     <value>Заголовок:</value>
   </data>
   <data name="EditorSystemHint" xml:space="preserve">
-    <value>system.md — вид оверлея для всего пресета. Учитываются только блоки ```focus-overlay с теми же параметрами, что и во вкладках. Порядок: настройки приложения → system.md → блок вкладки → изменения с клавиш.</value>
+    <value>Вид оверлея для всех вкладок пресета. Пустое поле — значение берётся из настроек приложения. Порядок: настройки приложения → пресет → вкладка → изменения с клавиш.</value>
   </data>
   <data name="EditorCannotDeleteLastPreset" xml:space="preserve">
     <value>Нельзя удалить единственный пресет.</value>
@@ -507,5 +504,51 @@
   </data>
   <data name="SettingsLanguageRestart" xml:space="preserve">
     <value>Язык изменится после перезапуска. Перезапустить сейчас?</value>
+  </data>
+  <data name="EditorImportMenu" xml:space="preserve">
+    <value>Импорт ▾</value>
+  </data>
+  <data name="EditorImportArchive" xml:space="preserve">
+    <value>Архив пресета…</value>
+  </data>
+  <data name="EditorData" xml:space="preserve">
+    <value>Данные</value>
+  </data>
+  <data name="EditorDataTooltip" xml:space="preserve">
+    <value>Открыть папку с файлами пресетов</value>
+  </data>
+  <data name="EditorPageSettings" xml:space="preserve">
+    <value>Настройки вкладки</value>
+  </data>
+  <data name="EditorPageSettingsHint" xml:space="preserve">
+    <value>Пустое поле — значение берётся из настроек пресета и приложения.</value>
+  </data>
+  <data name="EditorInherited" xml:space="preserve">
+    <value>Наследуется</value>
+  </data>
+  <data name="EditorClearValue" xml:space="preserve">
+    <value>Сбросить</value>
+  </data>
+  <data name="EditorScaleTooltip" xml:space="preserve">
+    <value>Множитель к масштабу предыдущих уровней: 1.2 — на 20 % крупнее</value>
+  </data>
+  <data name="EditorOpacityTooltip" xml:space="preserve">
+    <value>0.5 или 50%</value>
+  </data>
+  <data name="EditorIssuesTitle" xml:space="preserve">
+    <value>Ошибки</value>
+  </data>
+  <data name="EditorNoIssues" xml:space="preserve">
+    <value>Ошибок нет</value>
+  </data>
+  <data name="EditorMarkupHelp" xml:space="preserve">
+    <value>Справка по разметке</value>
+  </data>
+  <data name="WindowTitleMarkup" xml:space="preserve">
+    <value>Focus Overlay — разметка</value>
+  </data>
+  <data name="ControllerOpenDataFailed" xml:space="preserve">
+    <value>Не удалось открыть папку с данными:
+{0}</value>
   </data>
 </root>

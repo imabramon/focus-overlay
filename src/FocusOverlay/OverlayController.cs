@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -403,6 +405,22 @@ public sealed class OverlayController : IDisposable
         }
 
         AddImportedPreset(() => PresetFolderImporter.Import(dialog.FolderName), owner);
+    }
+
+    public void OpenDataFolder(Preset preset, Window? owner)
+    {
+        try
+        {
+            var presetDirectory = Path.GetDirectoryName(StateStore.GetAssetsDirectory(preset))!;
+            var presetsDirectory = Path.GetDirectoryName(presetDirectory)!;
+            Directory.CreateDirectory(presetsDirectory);
+            var arguments = Directory.Exists(presetDirectory) ? $"/select,\"{presetDirectory}\"" : $"\"{presetsDirectory}\"";
+            Process.Start(new ProcessStartInfo("explorer.exe", arguments) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            ShowError(owner, string.Format(Strings.ControllerOpenDataFailed, ex.Message));
+        }
     }
 
     public void ExportPreset(Preset preset, Window? owner)

@@ -226,7 +226,7 @@
     <value>Delete</value>
   </data>
   <data name="EditorImportFolder" xml:space="preserve">
-    <value>Import folder…</value>
+    <value>Folder with .md…</value>
   </data>
   <data name="EditorPresetLabel" xml:space="preserve">
     <value>Preset:</value>
@@ -238,7 +238,7 @@
     <value>⚙ system.md — preset settings</value>
   </data>
   <data name="EditorSystemTabTooltip" xml:space="preserve">
-    <value>```focus-overlay block for the whole preset. This tab is not shown on the overlay.</value>
+    <value>Appearance settings for the whole preset. This tab is not shown on the overlay.</value>
   </data>
   <data name="EditorAddPage" xml:space="preserve">
     <value>Add tab</value>
@@ -252,11 +252,8 @@
   <data name="EditorMoveDown" xml:space="preserve">
     <value>Move down</value>
   </data>
-  <data name="EditorMarkdownHint" xml:space="preserve">
-    <value>Markdown: **bold**, *italic*, ==highlight==, - [ ] tasks, tables. Sized image: ![name|32](file.png) — no spaces in the path (space → %20) — or ![[file with spaces.png]] (no size), Ctrl+V pastes from the clipboard. Table options: {widths="120,1*" borders=rows} with a blank line above the table. Tab appearance: a ```focus-overlay block. Full reference: docs/markup.md in the repository.</value>
-  </data>
   <data name="EditorIssuesTooltip" xml:space="preserve">
-    <value>Double-click to go to the line</value>
+    <value>Markup errors — click to show the list</value>
   </data>
   <data name="EditorInsertImage" xml:space="preserve">
     <value>Image…</value>
@@ -265,7 +262,7 @@
     <value>Title:</value>
   </data>
   <data name="EditorSystemHint" xml:space="preserve">
-    <value>system.md — overlay appearance for the whole preset. Only ```focus-overlay blocks with the same parameters as in tabs are used. Order: app settings → system.md → tab block → hotkey changes.</value>
+    <value>Overlay appearance for all tabs of the preset. Empty field — the value is taken from the app settings. Order: app settings → preset → tab → hotkey changes.</value>
   </data>
   <data name="EditorCannotDeleteLastPreset" xml:space="preserve">
     <value>You can't delete the only preset.</value>
@@ -513,5 +510,51 @@ They are also shown in the editor below the tab text.</value>
   </data>
   <data name="LanguageNameEnglish" xml:space="preserve">
     <value>English</value>
+  </data>
+  <data name="EditorImportMenu" xml:space="preserve">
+    <value>Import ▾</value>
+  </data>
+  <data name="EditorImportArchive" xml:space="preserve">
+    <value>Preset archive…</value>
+  </data>
+  <data name="EditorData" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="EditorDataTooltip" xml:space="preserve">
+    <value>Open the folder with preset files</value>
+  </data>
+  <data name="EditorPageSettings" xml:space="preserve">
+    <value>Tab settings</value>
+  </data>
+  <data name="EditorPageSettingsHint" xml:space="preserve">
+    <value>Empty field — the value is taken from the preset and app settings.</value>
+  </data>
+  <data name="EditorInherited" xml:space="preserve">
+    <value>Inherited</value>
+  </data>
+  <data name="EditorClearValue" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="EditorScaleTooltip" xml:space="preserve">
+    <value>Multiplier to the scale of previous levels: 1.2 — 20% larger</value>
+  </data>
+  <data name="EditorOpacityTooltip" xml:space="preserve">
+    <value>0.5 or 50%</value>
+  </data>
+  <data name="EditorIssuesTitle" xml:space="preserve">
+    <value>Errors</value>
+  </data>
+  <data name="EditorNoIssues" xml:space="preserve">
+    <value>No errors</value>
+  </data>
+  <data name="EditorMarkupHelp" xml:space="preserve">
+    <value>Markup reference</value>
+  </data>
+  <data name="WindowTitleMarkup" xml:space="preserve">
+    <value>Focus Overlay — markup</value>
+  </data>
+  <data name="ControllerOpenDataFailed" xml:space="preserve">
+    <value>Failed to open the data folder:
+{0}</value>
   </data>
 </root>

@@ -1,0 +1,14 @@
+<Window x:Class="FocusOverlay.Views.MarkupHelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:p="clr-namespace:FocusOverlay.Properties"
+        Title="{x:Static p:Strings.WindowTitleMarkup}"
+        Width="760"
+        Height="720"
+        MinWidth="420"
+        MinHeight="300"
+        Icon="/Assets/eye.ico"
+        Background="White"
+        WindowStartupLocation="CenterOwner">
+    <FlowDocumentScrollViewer x:Name="Viewer" Padding="16,8" VerticalScrollBarVisibility="Auto" IsToolBarVisible="False" />
+</Window>
